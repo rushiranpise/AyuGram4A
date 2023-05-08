@@ -23,6 +23,8 @@ public class BuildVars {
     public static boolean PM_BUILD = BuildConfig.IS_PM_BUILD;
     public static int BUILD_VERSION;
     public static String BUILD_VERSION_STRING;
+    public static String BUILD_STORE_PACKAGE = "com.android.vending";
+    public static String BUILD_ORIGINAL_PACKAGE = "org.telegram.messenger";
     public static int APP_ID;
     public static String APP_HASH;
 
@@ -60,6 +62,6 @@ public class BuildVars {
     }
 
     public static boolean isBetaApp() {
-        return DEBUG_VERSION;
+        return false;
     }
 }
