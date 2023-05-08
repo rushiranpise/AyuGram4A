@@ -164,14 +164,14 @@ public class ExteraConfig {
 
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            disableProximitySensor = preferences.getBoolean("disableProximitySensor", false);
+            disableProximitySensor = preferences.getBoolean("disableProximitySensor", true);
             tabletMode = preferences.getInt("tabletMode", 0);
 
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
             uploadSpeedBoost = preferences.getBoolean("uploadSpeedBoost", false);
 
             hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
-            showIdAndDc = preferences.getInt("showIdAndDc", 1);
+            showIdAndDc = preferences.getInt("showIdAndDc", 2);
 
             archiveOnPull = preferences.getBoolean("archiveOnPull", false);
             disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
@@ -183,40 +183,40 @@ public class ExteraConfig {
             centerTitle = preferences.getBoolean("centerTitle", false);
             tabCounter = preferences.getBoolean("tabCounter", true);
             tabIcons = preferences.getInt("tabIcons", 1);
-            tabStyle = preferences.getInt("tabStyle", 1);
-            actionBarTitle = preferences.getInt("actionBarTitle", 0);
+            tabStyle = preferences.getInt("tabStyle", 4);
+            actionBarTitle = preferences.getInt("actionBarTitle", 2);
 
             useSolarIcons = preferences.getBoolean("useSolarIcons", true);
 
             squareFab = preferences.getBoolean("squareFab", true);
-            forceBlur = preferences.getBoolean("forceBlur", false);
+            forceBlur = preferences.getBoolean("forceBlur", true);
             forceSnow = preferences.getBoolean("forceSnow", false);
             useSystemFonts = preferences.getBoolean("useSystemFonts", true);
             newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
             disableDividers = preferences.getBoolean("disableDividers", false);
-            useLNavigation = preferences.getBoolean("useLNavigation", false);
+            useLNavigation = preferences.getBoolean("useLNavigation", true);
 
             eventType = preferences.getInt("eventType", 0);
             alternativeOpenAnimation = preferences.getBoolean("alternativeOpenAnimation", true);
 
             changeStatus = preferences.getBoolean("changeStatus", true);
             newGroup = preferences.getBoolean("newGroup", true);
-            newSecretChat = preferences.getBoolean("newSecretChat", false);
-            newChannel = preferences.getBoolean("newChannel", false);
-            contacts = preferences.getBoolean("contacts", true);
+            newSecretChat = preferences.getBoolean("newSecretChat", true);
+            newChannel = preferences.getBoolean("newChannel", true);
+            contacts = preferences.getBoolean("contacts", false);
             calls = preferences.getBoolean("calls", false);
             peopleNearby = preferences.getBoolean("peopleNearby", false);
-            archivedChats = preferences.getBoolean("archivedChats", true);
+            archivedChats = preferences.getBoolean("archivedChats", false);
             savedMessages = preferences.getBoolean("savedMessages", true);
             scanQr = preferences.getBoolean("scanQr", true);
             inviteFriends = preferences.getBoolean("inviteFriends", false);
-            telegramFeatures = preferences.getBoolean("telegramFeatures", true);
+            telegramFeatures = preferences.getBoolean("telegramFeatures", false);
 
             // Chats
             stickerSize = preferences.getFloat("stickerSize", 14.0f);
             stickerShape = preferences.getInt("stickerShape", 1);
 
-            hideStickerTime = preferences.getBoolean("hideStickerTime", false);
+            hideStickerTime = preferences.getBoolean("hideStickerTime", true);
             unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
             hideCategories = preferences.getBoolean("hideCategories", true);
 
@@ -241,9 +241,9 @@ public class ExteraConfig {
 
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
 
-            sendPhotosQuality = preferences.getInt("sendPhotosQuality", 1);
-            hidePhotoCounter = preferences.getBoolean("hidePhotoCounter", false);
-            hideCameraTile = preferences.getBoolean("hideCameraTile", false);
+            sendPhotosQuality = preferences.getInt("sendPhotosQuality", 2);
+            hidePhotoCounter = preferences.getBoolean("hidePhotoCounter", true);
+            hideCameraTile = preferences.getBoolean("hideCameraTile", true);
 
             staticZoom = preferences.getBoolean("staticZoom", false);
             videoMessagesCamera = preferences.getInt("videoMessagesCamera", 0);
