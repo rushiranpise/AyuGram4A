@@ -24023,7 +24023,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
 
             if (message != null && message.messageOwner.ttl > 0) {
-                items.add(String.format(LocaleController.getString(R.string.THDMessageTTL), message.messageOwner.ttl));
+                items.add(String.format("TTL %d", message.messageOwner.ttl));
                 options.add(420_003);
                 icons.add(R.drawable.flame_small);
             }
