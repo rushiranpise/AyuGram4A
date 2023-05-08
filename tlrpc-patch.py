@@ -12,5 +12,7 @@ data = r1.sub('noforwards = false;', data)
 data = r2.sub('restricted = false;', data)
 data = r3.sub('history_deleted = false;', data)
 
+data = data.replace('public boolean topic_start;', 'public boolean topic_start;\n        public boolean isDeleted = false;')
+
 with open('./TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java', 'w', encoding='utf-8') as f:
     f.write(data)

@@ -60927,6 +60927,7 @@ public class TLRPC {
         public int ttl_period;
         public boolean noforwards;
         public boolean topic_start;
+        public boolean isDeleted = false;
         public int send_state = 0; //custom
         public int fwd_msg_id = 0; //custom
         public String attachPath = ""; //custom
