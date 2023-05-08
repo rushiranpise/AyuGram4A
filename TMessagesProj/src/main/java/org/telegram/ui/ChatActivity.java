@@ -110,6 +110,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
+import com.exteragram.messenger.telegrapher.ui.ThMessageHistory;
 import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.SystemUtils;
 import com.exteragram.messenger.boost.BoostController;
@@ -24013,6 +24014,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
             }
 
+            if (message != null
+                    && ((message.messageOwner.flags & TLRPC.MESSAGE_FLAG_EDITED) != 0 || message.isEditing())
+                    && message.messageOwner.from_id != null
+                    && message.messageOwner.from_id.user_id != getAccountInstance().getUserConfig().getClientUserId()) {
+                items.add("History");
+                options.add(420_001);
+                icons.add(R.drawable.msg_log);
+            }
+
             if (!(options.contains(4) || options.contains(7))
                     && (selectedObject.isSecretMedia() || selectedObject.isGif() || selectedObject.isNewGif() || selectedObject.isPhoto() || selectedObject.isRoundVideo() || selectedObject.isVideo())) {
                 items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
@@ -25584,6 +25594,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         boolean preserveDim = false;
         switch (option) {
+            case 420_001: {
+                presentFragment(new ThMessageHistory(selectedObject));
+                break;
+            }
             case OPTION_RETRY: {
                 if (selectedObjectGroup != null) {
                     boolean success = true;
