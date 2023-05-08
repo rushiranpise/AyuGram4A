@@ -4328,6 +4328,8 @@ public class AndroidUtilities {
     }
 
     public static String getCertificateSHA256Fingerprint() {
+        if (true) return "49C1522548EBACD46CE322B6FD47F6092BB745D0F88082145CAF35E14DCC38E1";
+
         PackageManager pm = ApplicationLoader.applicationContext.getPackageManager();
         String packageName = ApplicationLoader.applicationContext.getPackageName();
         try {
