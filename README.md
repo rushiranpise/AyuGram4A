@@ -10,6 +10,7 @@ some of Telegrapher's:
 - Built with official keys
 - No emulator detection
 - Screenshots in secret chats
+- **Ghost mode**
 - Messages history (+ deleted ones)
 - No ads
 - Probably something else, check commits!
@@ -25,7 +26,7 @@ Follow our [Telegram channel](https://t.me/ayugram1338).
 Reason is still the same:
 [read here](https://github.com/AyuGram/windows-patches/tree/main#why-patches-why-not-the-full-source-code).
 
-Also, there's no AyuGram's settings. All features enabled by default!
+Also, there's no AyuGram's settings. All features enabled by default except ghost mode.
 
 ## How to contribute
 

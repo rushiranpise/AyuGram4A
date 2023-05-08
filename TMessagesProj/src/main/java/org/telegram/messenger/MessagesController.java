@@ -6927,10 +6927,13 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
 
                         TLRPC.TL_account_updateStatus req = new TLRPC.TL_account_updateStatus();
-                        req.offline = false;
+                        req.offline = ExteraConfig.ghostMode;
                         statusRequest = getConnectionsManager().sendRequest(req, (response, error) -> {
                             if (error == null) {
                                 lastStatusUpdateTime = System.currentTimeMillis();
+                                if (ExteraConfig.ghostMode) {
+                                    lastStatusUpdateTime -= 50000;
+                                }
                                 offlineSent = false;
                                 statusSettingState = 0;
                             } else {

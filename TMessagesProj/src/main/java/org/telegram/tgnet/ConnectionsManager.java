@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.exteragram.messenger.ExteraConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.json.JSONArray;
@@ -303,6 +304,29 @@ public class ConnectionsManager extends BaseController {
     private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connetionType, boolean immediate, int requestToken) {
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
+        }
+        if (ExteraConfig.ghostMode) {
+            if (
+                    object instanceof TLRPC.TL_messages_readDiscussion ||
+                    object instanceof TLRPC.TL_messages_readEncryptedHistory ||
+                    object instanceof TLRPC.TL_messages_readHistory ||
+                    object instanceof TLRPC.TL_messages_readMentions ||
+                    object instanceof TLRPC.TL_messages_readMessageContents ||
+                    object instanceof TLRPC.TL_messages_readReactions
+            ) {
+                return;
+            }
+
+            if (object instanceof TLRPC.TL_messages_setTyping) {
+                return;
+            }
+
+            if (object instanceof TLRPC.TL_account_updateStatus) {
+                var obj = ((TLRPC.TL_account_updateStatus) object);
+                if (!obj.offline) {
+                    obj.offline = true;
+                }
+            }
         }
         try {
             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());

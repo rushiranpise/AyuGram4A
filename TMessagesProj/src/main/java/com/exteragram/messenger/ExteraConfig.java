@@ -63,6 +63,7 @@ public class ExteraConfig {
     public static boolean useCameraXOptimizedMode;
     public static int cameraResolution;
 
+    public static boolean ghostMode;
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
     public static boolean disableProximitySensor;
@@ -162,6 +163,7 @@ public class ExteraConfig {
             useCameraXOptimizedMode = preferences.getBoolean("useCameraXOptimizedMode", SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_HIGH);
             cameraResolution = preferences.getInt("cameraResolution", CameraXUtils.getCameraResolution());
 
+            ghostMode = preferences.getBoolean("ghostMode", false);
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
             disableProximitySensor = preferences.getBoolean("disableProximitySensor", true);
@@ -173,7 +175,7 @@ public class ExteraConfig {
             hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
             showIdAndDc = preferences.getInt("showIdAndDc", 2);
 
-            archiveOnPull = preferences.getBoolean("archiveOnPull", false);
+            archiveOnPull = preferences.getBoolean("archiveOnPull", true);
             disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
 
             // Appearance
