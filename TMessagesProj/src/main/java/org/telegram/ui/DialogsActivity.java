@@ -7740,17 +7740,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private void performDeleteOrClearDialogAction(int action, long selectedDialog, TLRPC.Chat chat, boolean isBot, boolean revoke) {
         if (action == clear) {
-            getMessagesController().deleteDialog(selectedDialog, 1, revoke);
+            getMessagesController().deleteDialog(selectedDialog, 1, revoke, true);
         } else {
             if (chat != null) {
                 if (ChatObject.isNotInChat(chat)) {
-                    getMessagesController().deleteDialog(selectedDialog, 0, revoke);
+                    getMessagesController().deleteDialog(selectedDialog, 0, revoke, true);
                 } else {
                     TLRPC.User currentUser = getMessagesController().getUser(getUserConfig().getClientUserId());
                     getMessagesController().deleteParticipantFromChat(-selectedDialog, currentUser, null, revoke, false);
                 }
             } else {
-                getMessagesController().deleteDialog(selectedDialog, 0, revoke);
+                getMessagesController().deleteDialog(selectedDialog, 0, revoke, true);
                 if (isBot && revoke) {
                     getMessagesController().blockPeer(selectedDialog);
                 }

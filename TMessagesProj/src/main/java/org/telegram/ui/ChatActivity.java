@@ -9674,7 +9674,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 totalPinnedMessagesCount = 0;
                 updatePinnedMessageView(true);
             }
-            getMessagesController().deleteDialog(dialog_id, 1, revoke);
+            getMessagesController().deleteDialog(dialog_id, 1, revoke, true);
             clearingHistory = false;
             clearHistory(false, null);
             chatAdapter.notifyDataSetChanged();
@@ -14122,6 +14122,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
                         }
                         if (canSave) {
+                            sendSecretMessageRead(messageObject, true);
                             if (messageObject.getDocument() != null && !messageObject.isMusic()) {
                                 String mime = messageObject.getDocument().mime_type;
                                 if (mime != null) {
@@ -17162,21 +17163,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
             }
         } else if (id == NotificationCenter.removeAllMessagesFromDialog) {
-            long did = (Long) args[0];
-            if (dialog_id == did) {
-                if (threadMessageId != 0) {
-                    if (forwardEndReached[0]) {
-                        forwardEndReached[0] = false;
-                        hideForwardEndReached = false;
-                        if (chatAdapter != null) {
-                            chatAdapter.notifyItemInserted(0);
-                        }
-                    }
-                    getMessagesController().addToViewsQueue(threadMessageObject);
-                } else {
-                    clearHistory((Boolean) args[1], (TLRPC.TL_updates_channelDifferenceTooLong) args[2]);
-                }
-            }
+            // removed
         } else if (id == NotificationCenter.screenshotTook) {
             updateInformationForScreenshotDetector();
         } else if (id == NotificationCenter.blockedUsersDidLoad) {
@@ -18710,6 +18697,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (res == null || res.messages == null) {
             return;
         }
+        ArrayList<MessageObject> nonAds = new ArrayList<>();
         for (int i = 0; i < res.messages.size(); i++) {
             MessageObject messageObject = res.messages.get(i);
             messageObject.resetLayout();
@@ -18718,14 +18706,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (messageObject.sponsoredChannelPost != 0) {
                 messageId = messageObject.sponsoredChannelPost;
             }
-            getMessagesController().ensureMessagesLoaded(dialogId, messageId, null);
+            if (!messageObject.isSponsored()) {
+                getMessagesController().ensureMessagesLoaded(dialogId, messageId, null);
+                nonAds.add(messageObject);
+            } else {
+                markSponsoredAsRead(messageObject);
+            }
         }
         sponsoredMessagesAdded = true;
-        sponsoredMessagesPostsBetween = res.posts_between != null ? res.posts_between : 0;
-        if (notPushedSponsoredMessages != null) {
-            notPushedSponsoredMessages.clear();
-        }
-        processNewMessages(res.messages);
+        if (nonAds.isEmpty()) return;
+        processNewMessages(nonAds);
     }
 
     private void checkGroupCallJoin(boolean fromServer) {
@@ -19765,14 +19755,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private int getSponsoredMessagesCount() {
-        int sponsoredMessagesCount = 0;
-        while (sponsoredMessagesCount < messages.size()) {
-            if (!messages.get(sponsoredMessagesCount).isSponsored()) {
-                break;
-            }
-            sponsoredMessagesCount++;
-        }
-        return sponsoredMessagesCount;
+        return 0;
     }
 
     private void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId) {
@@ -20631,8 +20614,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 BaseFragment fragment = parentLayout.getFragmentStack().get(parentLayout.getFragmentStack().size() - 1);
                 removeSelfFromStack();
                 fragment.finishFragment();
-            } else {
-                finishFragment();
             }
         }
     }
@@ -24030,6 +24011,19 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     options.add(OPTION_DETAILS);
                     icons.add(R.drawable.msg_info);
                 }
+            }
+
+            if (!(options.contains(4) || options.contains(7))
+                    && (selectedObject.isSecretMedia() || selectedObject.isGif() || selectedObject.isNewGif() || selectedObject.isPhoto() || selectedObject.isRoundVideo() || selectedObject.isVideo())) {
+                items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
+                options.add(4);
+                icons.add(R.drawable.msg_gallery);
+            }
+            if (!options.contains(10)
+                    && (selectedObject.isSecretMedia() || selectedObject.isGif() || selectedObject.isNewGif() || selectedObject.isRoundVideo() || selectedObject.isVideo() || selectedObject.isDocument() || selectedObject.isMusic() || selectedObject.isVoice())) {
+                items.add(LocaleController.getString("SaveToDownloads", R.string.SaveToDownloads));
+                options.add(10);
+                icons.add(R.drawable.msg_download);
             }
 
             if (options.isEmpty() && optionsView == null) {
@@ -27849,6 +27843,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         }
         if (message.isVideo()) {
+            sendSecretMessageRead(message, true);
+        }
+        if (isSecretChat() && (message.isPhoto() || message.isGif() || message.isNewGif())) {
             sendSecretMessageRead(message, true);
         }
         PhotoViewer.getInstance().setParentActivity(this, themeDelegate);

@@ -7097,18 +7097,11 @@ public class MessageObject {
     }
 
     public boolean canForwardMessage() {
-        return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && !messageOwner.noforwards;
+        return true;
     }
 
     public boolean canEditMedia() {
-        if (isSecretMedia()) {
-            return false;
-        } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaPhoto) {
-            return true;
-        } else if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaDocument) {
-            return !isVoice() && !isSticker() && !isAnimatedSticker() && !isRoundVideo();
-        }
-        return false;
+        return true;
     }
 
     public boolean canEditMessageAnytime(TLRPC.Chat chat) {

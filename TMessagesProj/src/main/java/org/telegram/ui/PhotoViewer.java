@@ -12049,7 +12049,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 MessagesController.getInstance(currentAccount).loadDialogPhotos(avatarsDialogId, 80, 0, true, classGuid);
             }
         }
-        if (currentMessageObject != null && currentMessageObject.isVideo() || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && pageBlocksAdapter.isVideo(index)) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
+        if (currentMessageObject != null && (currentMessageObject.isVideo() || currentMessageObject.isGif()) || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && pageBlocksAdapter.isVideo(index)) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
             playerAutoStarted = true;
             onActionClick(false);
         } else if (!imagesArrLocals.isEmpty()) {
@@ -12241,8 +12241,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
 
             if (currentAnimation != null) {
-                menuItem.hideSubItem(gallery_menu_save);
-                menuItem.hideSubItem(gallery_menu_copy);
+                menuItem.showSubItem(gallery_menu_save);
+                menuItem.showSubItem(gallery_menu_copy);
                 menuItem.hideSubItem(gallery_menu_share);
                 setItemVisible(editItem, false, animated);
                 menuItem.hideSubItem(gallery_menu_paint2);
@@ -12345,10 +12345,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 setItemVisible(sendItem, false, false);
             }
             if (isEmbedVideo || newMessageObject.messageOwner.ttl != 0 && newMessageObject.messageOwner.ttl < 60 * 60 || noforwards) {
-                allowShare = false;
-                menuItem.hideSubItem(gallery_menu_save);
-                menuItem.hideSubItem(gallery_menu_copy);
-                menuItem.hideSubItem(gallery_menu_share);
+                allowShare = true;
+                menuItem.showSubItem(gallery_menu_save);
+                menuItem.showSubItem(gallery_menu_copy);
+                menuItem.showSubItem(gallery_menu_share);
                 setItemVisible(editItem, false, animated);
                 menuItem.hideSubItem(gallery_menu_paint2);
             } else {
