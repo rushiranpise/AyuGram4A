@@ -261,8 +261,8 @@ public class ExteraConfig {
             channelToSave = preferences.getLong("channelToSave", 0);
             targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
             voiceHintShowcases = preferences.getInt("voiceHintShowcases", 0);
-            useGoogleCrashlytics = preferences.getBoolean("useGoogleCrashlytics", true);
-            useGoogleAnalytics = preferences.getBoolean("useGoogleAnalytics", true);
+            useGoogleCrashlytics = preferences.getBoolean("useGoogleCrashlytics", false);
+            useGoogleAnalytics = preferences.getBoolean("useGoogleAnalytics", false);
 
             configLoaded = true;
         }
