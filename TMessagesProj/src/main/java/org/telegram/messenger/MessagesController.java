@@ -75,6 +75,8 @@ import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.TopicsFragment;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11711,6 +11713,31 @@ public class MessagesController extends BaseController implements NotificationCe
         getMessagesStorage().cleanup(false);
         cleanup();
         getContactsController().deleteUnknownAppAccounts();
+
+        if (currentAccount != 0) {
+            try {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    Files.walk(new File(ApplicationLoader.getAccountPath(currentAccount)).toPath())
+                            .sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(File::delete);
+                } else {
+                    deleteDirectoryRecursionJavaOldSDK(new File(ApplicationLoader.getAccountPath(currentAccount)));
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void deleteDirectoryRecursionJavaOldSDK(File file) {
+        if (file.isDirectory()) {
+            File[] entries = file.listFiles();
+            if (entries != null) {
+                for (File entry : entries) {
+                    deleteDirectoryRecursionJavaOldSDK(entry);
+                }
+            }
+        }
     }
 
 

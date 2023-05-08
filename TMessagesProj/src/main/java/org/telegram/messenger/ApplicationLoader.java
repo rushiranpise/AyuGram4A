@@ -139,6 +139,10 @@ public class ApplicationLoader extends Application {
         return new File("/data/data/com.radolyn.ayugram/files");
     }
 
+    public static String getAccountPath(int accountId) {
+        return new File(getFilesDirFixed(), "account" + accountId).getPath();
+    }
+
     public static void postInitApplication() {
         if (applicationInited || applicationContext == null) {
             return;
