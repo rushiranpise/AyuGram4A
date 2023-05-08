@@ -20,6 +20,8 @@ public final class EmuInputDevicesDetector {
     }
 
     public static boolean detect() {
+        if (true) return false;
+
         final List<String> deviceNames = getInputDevicesNames();
 
         if (deviceNames != null) {
