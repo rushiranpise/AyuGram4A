@@ -12,7 +12,7 @@
 -->
 
 <resources>
-    <string name="exteraAppName" translatable="false">exteraGram</string>
+    <string name="exteraAppName" translatable="false">AyuGram</string>
     <string name="Preferences">exteraGram Preferences</string>
 
     <!-- Main Menu -->
