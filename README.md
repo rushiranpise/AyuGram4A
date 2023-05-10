@@ -5,15 +5,16 @@
 ## Features
 
 **AyuGram4A** is built on top of exteraGram, which means we have all the features exteraGram has and
-some of Telegrapher's:
+some of Telegraher's:
 
 - Built with official keys
 - No emulator detection
 - Screenshots in secret chats
-- **Ghost mode**
 - Messages history (+ deleted ones)
 - No ads
 - Probably something else, check commits!
+
+...and **ghost mode**.
 
 Please note that AyuGram does **NOT** include some closed-source exteraGram features.
 
@@ -21,7 +22,7 @@ Please note that AyuGram does **NOT** include some closed-source exteraGram feat
 
 Follow our [Telegram channel](https://t.me/ayugram1338).
 
-## Why there's no `X` feature from Telegrapher?
+## Why there's no `X` feature from Telegraher?
 
 Reason is still the same:
 [read here](https://github.com/AyuGram/windows-patches/tree/main#why-patches-why-not-the-full-source-code).
@@ -54,4 +55,4 @@ at [Crowdin](https://crowdin.com/project/exteralocales)!
 ## Credits
 
 - [exteraGram](https://github.com/exteraSquad/exteraGram)
-- [Telegrapher](https://github.com/nikitasius/Telegraher)
+- [Telegraher](https://github.com/nikitasius/Telegraher)
