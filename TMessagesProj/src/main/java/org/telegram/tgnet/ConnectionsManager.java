@@ -326,6 +326,8 @@ public class ConnectionsManager extends BaseController {
                 if (!obj.offline) {
                     obj.offline = true;
                 }
+
+                Log.d("AyuGram", "Online status sending");
             }
         }
         try {

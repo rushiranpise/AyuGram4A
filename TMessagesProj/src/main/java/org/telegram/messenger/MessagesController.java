@@ -6910,6 +6910,9 @@ public class MessagesController extends BaseController implements NotificationCe
         });
     }
 
+    private TLRPC.UserStatus prevStatus;
+    private boolean statusUpdating;
+
     public void updateTimerProc() {
         long currentTime = System.currentTimeMillis();
 
@@ -6917,6 +6920,30 @@ public class MessagesController extends BaseController implements NotificationCe
         checkReadTasks();
 
         if (getUserConfig().isClientActivated()) {
+            if (ExteraConfig.ghostMode) {
+                if (getUser(getUserConfig().clientUserId) != null && !statusUpdating) {
+                    // this one doesn't get updated if you send message, so there's no other way to
+                    // understand if we're online
+                    // but status objects differ on status update, so we're just saving previous
+                    // and comparing them ignoring the status type
+                    var curStatus = getUser(getUserConfig().clientUserId).status;
+
+                    if (curStatus != prevStatus) {
+                        statusUpdating = true;
+                        Log.e("AyuGram", "Prevent online");
+
+                        TLRPC.TL_account_updateStatus req = new TLRPC.TL_account_updateStatus();
+                        req.offline = true;
+
+                        getConnectionsManager().sendRequest(req, (response, error) -> {
+                            prevStatus = getUser(getUserConfig().clientUserId).status;
+
+                            statusUpdating = false;
+                        });
+                    }
+                }
+            }
+
             if (!ignoreSetOnline && getConnectionsManager().getPauseTime() == 0 && ApplicationLoader.isScreenOn && !ApplicationLoader.mainInterfacePausedStageQueue) {
                 if (ApplicationLoader.mainInterfacePausedStageQueueTime != 0 && Math.abs(ApplicationLoader.mainInterfacePausedStageQueueTime - System.currentTimeMillis()) > 1000) {
                     if (statusSettingState != 1 && (lastStatusUpdateTime == 0 || Math.abs(System.currentTimeMillis() - lastStatusUpdateTime) >= 55000 || offlineSent)) {
@@ -6931,9 +6958,6 @@ public class MessagesController extends BaseController implements NotificationCe
                         statusRequest = getConnectionsManager().sendRequest(req, (response, error) -> {
                             if (error == null) {
                                 lastStatusUpdateTime = System.currentTimeMillis();
-                                if (ExteraConfig.ghostMode) {
-                                    lastStatusUpdateTime -= 50000;
-                                }
                                 offlineSent = false;
                                 statusSettingState = 0;
                             } else {
