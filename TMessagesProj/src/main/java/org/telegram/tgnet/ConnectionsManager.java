@@ -312,12 +312,28 @@ public class ConnectionsManager extends BaseController {
                     object instanceof TLRPC.TL_messages_readHistory ||
                     object instanceof TLRPC.TL_messages_readMentions ||
                     object instanceof TLRPC.TL_messages_readMessageContents ||
-                    object instanceof TLRPC.TL_messages_readReactions
+                    object instanceof TLRPC.TL_messages_readReactions ||
+                    object instanceof TLRPC.TL_channels_readHistory ||
+                    object instanceof TLRPC.TL_channels_readMessageContents
             ) {
+                var fakeRes = new TLRPC.TL_messages_affectedMessages();
+                // idk if this should be -1 or what, check `TL_messages_readMessageContents` usages
+                fakeRes.pts = -1;
+                fakeRes.pts_count = 0;
+
+                try {
+                    if (onComplete != null) {
+                        onComplete.run(fakeRes, null);
+                    }
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+
                 return;
             }
 
             if (object instanceof TLRPC.TL_messages_setTyping) {
+                // no need to run `onComplete`
                 return;
             }
 

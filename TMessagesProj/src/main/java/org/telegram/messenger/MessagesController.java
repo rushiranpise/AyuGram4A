@@ -6930,7 +6930,7 @@ public class MessagesController extends BaseController implements NotificationCe
 
                     if (curStatus != prevStatus) {
                         statusUpdating = true;
-                        Log.e("AyuGram", "Prevent online");
+                        Log.d("AyuGram", "Prevent online");
 
                         TLRPC.TL_account_updateStatus req = new TLRPC.TL_account_updateStatus();
                         req.offline = true;
