@@ -214,7 +214,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             if (!BuildVars.PM_BUILD)
                 (new UpdaterBottomSheet(getParentActivity(), this, false)).show();
         } else if (position == sourceCodeRow) {
-            Browser.openUrl(getParentActivity(), "https://github.com/AyuGram/AyuGram4A");
+            Browser.openUrl(getParentActivity(), "https://github.com/" + BuildVars.APP_GITHUB);
         } else if (position == channelRow) {
             MessagesController.getInstance(currentAccount).openByUserName(("ayugram1338"), this, 1);
         } else if (position == groupRow) {

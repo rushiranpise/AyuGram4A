@@ -23,6 +23,8 @@ public class BuildVars {
     public static boolean PM_BUILD = BuildConfig.IS_PM_BUILD;
     public static int BUILD_VERSION;
     public static String BUILD_VERSION_STRING;
+    public static String APP_NAME = ApplicationLoader.applicationContext.getString(R.string.exteraAppName);
+    public static String APP_GITHUB = "AyuGram/AyuGram4A";
     public static String BUILD_STORE_PACKAGE = "com.android.vending";
     public static String BUILD_ORIGINAL_PACKAGE = "org.telegram.messenger";
     public static int APP_ID;
@@ -32,7 +34,7 @@ public class BuildVars {
     public static String SAFETYNET_KEY = "";
     public static String SMS_HASH;
     public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=com.exteragram.messenger";
-    public static String GOOGLE_AUTH_CLIENT_ID = "760348033671-81kmi3pi84p11ub8hp9a1funsv0rn2p9.apps.googleusercontent.com";
+    public static String GOOGLE_AUTH_CLIENT_ID = "241188506271-3n5ru8fm0kn3ujr5tphajrtpu076dqa7.apps.googleusercontent.com";
 
     // You can use this flag to disable Google Play Billing (If you're making fork and want it to be in Google Play)
     public static boolean IS_BILLING_UNAVAILABLE = PM_BUILD;

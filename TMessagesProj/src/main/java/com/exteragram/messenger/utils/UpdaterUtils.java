@@ -55,7 +55,7 @@ public class UpdaterUtils {
 
     public static final DispatchQueue otaQueue = new DispatchQueue("otaQueue");
 
-    private static String uri = "https://api.github.com/repos/exteraSquad/exteraGram/releases/latest";
+    private static String uri = "https://api.github.com/repos/" + BuildVars.APP_GITHUB + "/releases/latest";
     private static String downloadURL = null;
     public static String version, changelog, size, uploadDate;
     public static File otaPath, versionPath, apkFile;
@@ -103,7 +103,7 @@ public class UpdaterUtils {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
             try {
                 if (BuildVars.isBetaApp())
-                    uri = uri.replace("/exteraGram/", "/exteraGram-Beta/");
+                    uri = uri.replace("/" + BuildVars.APP_NAME + "/", "/" + BuildVars.APP_NAME + "-Beta/");
                 var connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", TranslatorUtils.formatUserAgent());

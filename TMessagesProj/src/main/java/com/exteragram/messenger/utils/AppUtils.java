@@ -24,11 +24,11 @@ public class AppUtils {
 
     public static String getAppName() {
         try {
-            return ApplicationLoader.applicationContext.getString(R.string.exteraAppName) + (BuildVars.isBetaApp() ? " β" : "");
+            return BuildVars.APP_NAME + (BuildVars.isBetaApp() ? " β" : "");
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return "exteraGram";
+        return BuildVars.APP_NAME;
     }
 
     public static int[] getDrawerIconPack() {
