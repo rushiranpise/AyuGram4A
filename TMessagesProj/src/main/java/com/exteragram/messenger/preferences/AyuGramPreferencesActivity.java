@@ -28,6 +28,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int ghostModeRow;
     private int scheduledMessagesRow;
+    private int walModeRow;
 
     @Override
     protected void updateRowsId() {
@@ -36,6 +37,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         generalHeaderRow = newRow();
         ghostModeRow = newRow();
         scheduledMessagesRow = newRow();
+        walModeRow = newRow();
     }
 
     @Override
@@ -46,6 +48,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == scheduledMessagesRow) {
             ExteraConfig.editor.putBoolean("scheduleMessages", ExteraConfig.scheduleMessages ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.scheduleMessages);
+        } else if (position == walModeRow) {
+            ExteraConfig.editor.putBoolean("walMode", ExteraConfig.walMode ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.walMode);
         }
     }
 
@@ -86,6 +91,8 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck("Ghost Mode", ExteraConfig.ghostMode, true);
                     } else if (position == scheduledMessagesRow) {
                         textCheckCell.setTextAndCheck("Schedule Messages", ExteraConfig.scheduleMessages, true);
+                    } else if (position == walModeRow) {
+                        textCheckCell.setTextAndCheck("Enable WAL Mode", ExteraConfig.walMode, true);
                     }
                     break;
             }

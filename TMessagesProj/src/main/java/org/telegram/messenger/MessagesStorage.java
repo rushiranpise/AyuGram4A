@@ -23,6 +23,8 @@ import android.util.SparseIntArray;
 import androidx.annotation.UiThread;
 import androidx.collection.LongSparseArray;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.SQLite.SQLiteDatabase;
@@ -296,7 +298,7 @@ public class MessagesStorage extends BaseController {
             database = new SQLiteDatabase(cacheFile.getPath());
             database.executeFast("PRAGMA secure_delete = ON").stepThis().dispose();
             database.executeFast("PRAGMA temp_store = MEMORY").stepThis().dispose();
-            database.executeFast("PRAGMA journal_mode = WAL").stepThis().dispose();
+            database.executeFast("PRAGMA journal_mode = " + (ExteraConfig.walMode ? "WAL" : "OFF")).stepThis().dispose();
             database.executeFast("PRAGMA journal_size_limit = 10485760").stepThis().dispose();
 
             if (createTable) {
@@ -414,7 +416,7 @@ public class MessagesStorage extends BaseController {
                 database = new SQLiteDatabase(cacheFile.getPath());
                 database.executeFast("PRAGMA secure_delete = ON").stepThis().dispose();
                 database.executeFast("PRAGMA temp_store = MEMORY").stepThis().dispose();
-                database.executeFast("PRAGMA journal_mode = WAL").stepThis().dispose();
+                database.executeFast("PRAGMA journal_mode = " + (ExteraConfig.walMode ? "WAL" : "OFF")).stepThis().dispose();
                 database.executeFast("PRAGMA journal_size_limit = 10485760").stepThis().dispose();
             } catch (SQLiteException e) {
                 FileLog.e(new Exception(e));

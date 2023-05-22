@@ -120,6 +120,7 @@ public class ExteraConfig {
     // AyuGram
     public static boolean ghostMode;
     public static boolean scheduleMessages;
+    public static boolean walMode;
 
     // Updates
     public static long lastUpdateCheckTime;
@@ -259,6 +260,7 @@ public class ExteraConfig {
             // AyuGram
             ghostMode = preferences.getBoolean("ghostMode", false);
             scheduleMessages = preferences.getBoolean("scheduleMessages", false);
+            walMode = preferences.getBoolean("walMode", true); // https://t.me/ayugramchat/966
 
             // Updates
             lastUpdateCheckTime = preferences.getLong("lastUpdateCheckTime", 0);

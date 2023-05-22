@@ -91,6 +91,7 @@ import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AnimatedTextView;
 import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CacheChart;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -1515,11 +1516,15 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             if (getParentActivity() == null) {
                 return;
             }
-            progressDialog = new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
-            progressDialog.setCanCancel(false);
-            progressDialog.showDelayed(500);
-            MessagesController.getInstance(currentAccount).clearQueryTime();
-            getMessagesStorage().clearLocalDatabase();
+            if (ExteraConfig.walMode) {
+                progressDialog = new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
+                progressDialog.setCanCancel(false);
+                progressDialog.showDelayed(500);
+                MessagesController.getInstance(currentAccount).clearQueryTime();
+                getMessagesStorage().clearLocalDatabase();
+            } else {
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.error, LocaleController.getString("UnknownError", R.string.UnknownError)).show();
+            }
         });
         AlertDialog alertDialog = builder.create();
         showDialog(alertDialog);

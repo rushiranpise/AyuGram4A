@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
@@ -19,6 +21,7 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.StickerImageView;
 
@@ -85,8 +88,12 @@ public class SuggestClearDatabaseBottomSheet extends BottomSheet {
                 if (fragment.getParentActivity() == null) {
                     return;
                 }
-                MessagesController.getInstance(currentAccount).clearQueryTime();
-                fragment.getMessagesStorage().clearLocalDatabase();
+                if (ExteraConfig.walMode) {
+                    MessagesController.getInstance(currentAccount).clearQueryTime();
+                    fragment.getMessagesStorage().clearLocalDatabase();
+                } else {
+                    BulletinFactory.of(fragment).createSimpleBulletin(R.raw.error, LocaleController.getString("UnknownError", R.string.UnknownError)).show();
+                }
             });
             AlertDialog alertDialog = builder.create();
             fragment.showDialog(alertDialog);
