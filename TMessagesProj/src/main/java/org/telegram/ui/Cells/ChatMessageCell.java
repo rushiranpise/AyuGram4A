@@ -12601,7 +12601,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
 
                 forwardedNameWidth = getMaxNameWidth();
-                String forwardedString = getForwardedMessageText(messageObject);
+                String forwardedString;
+                if (ExteraConfig.realForwardTime) {
+                    forwardedString = String.format("¶ %s", LocaleController.formatDateTime(messageObject.messageOwner.fwd_from.date));
+                } else {
+                    forwardedString = getForwardedMessageText(messageObject);
+                }
                 if (hasPsaHint) {
                     forwardedNameWidth -= AndroidUtilities.dp(36);
                 }
