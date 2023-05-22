@@ -3717,6 +3717,28 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             }
             newMsg.params = params;
             if (retryMessageObject == null || !retryMessageObject.resendAsIs) {
+                if (ExteraConfig.scheduledMessages && scheduleDate == 0) {
+                    scheduleDate = getAccountInstance().getConnectionsManager().getCurrentTime() + 10; // min t = 10 sec
+
+                    // ..but here's the problem:
+                    // "If the schedule_date is less than 10 seconds in the future, the message will be sent immediately, generating a normal updateNewMessage/updateNewChannelMessage."
+                    // we have to ensure that we have a small window for an error
+                    scheduleDate += 1; // 1 sec
+
+                    // ..but that's not all
+                    // while we're uploading media, the time is already running
+                    // so we have to add SOME TIME until media uploads...
+                    if (photo != null) {
+                        scheduleDate += 5; // like, photos upload really fast, aren't they?
+                    }
+
+                    if (document != null) {
+                        scheduleDate += 20; // it can be a big file or smth..
+                    }
+
+                    // todo: check if it applies to `retryMessageObject`
+                }
+
                 newMsg.date = scheduleDate != 0 ? scheduleDate : getConnectionsManager().getCurrentTime();
                 if (sendToPeer instanceof TLRPC.TL_inputPeerChannel) {
                     if (scheduleDate == 0 && isChannel) {

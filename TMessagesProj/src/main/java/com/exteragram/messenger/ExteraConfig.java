@@ -64,6 +64,7 @@ public class ExteraConfig {
     public static int cameraResolution;
 
     public static boolean ghostMode;
+    public static boolean scheduledMessages;
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
     public static boolean disableProximitySensor;
@@ -164,6 +165,7 @@ public class ExteraConfig {
             cameraResolution = preferences.getInt("cameraResolution", CameraXUtils.getCameraResolution());
 
             ghostMode = preferences.getBoolean("ghostMode", false);
+            scheduledMessages = preferences.getBoolean("scheduledMessages", false);
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
             disableProximitySensor = preferences.getBoolean("disableProximitySensor", true);

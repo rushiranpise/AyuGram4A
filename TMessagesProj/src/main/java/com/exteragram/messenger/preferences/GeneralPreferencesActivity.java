@@ -73,6 +73,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int formatTimeWithSecondsRow;
     private int ghostModeRow;
+    private int scheduledMessagesRow;
     private int disableNumberRoundingRow;
     private int disableProximitySensorRow;
     private int tabletModeRow;
@@ -110,6 +111,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
 
         generalHeaderRow = newRow();
         ghostModeRow = newRow();
+        scheduledMessagesRow = newRow();
         disableNumberRoundingRow = newRow();
         formatTimeWithSecondsRow = newRow();
         disableProximitySensorRow = newRow();
@@ -137,6 +139,9 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         if (position == ghostModeRow) {
             ExteraConfig.editor.putBoolean("ghostMode", ExteraConfig.ghostMode ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.ghostMode);
+        } else if (position == scheduledMessagesRow) {
+            ExteraConfig.editor.putBoolean("scheduledMessages", ExteraConfig.scheduledMessages ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.scheduledMessages);
         } else if (position == disableNumberRoundingRow) {
             ExteraConfig.editor.putBoolean("disableNumberRounding", ExteraConfig.disableNumberRounding ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableNumberRounding);
@@ -272,6 +277,8 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                     textCheckCell.setEnabled(true, null);
                     if (position == ghostModeRow) {
                         textCheckCell.setTextAndCheck("Ghost Mode", ExteraConfig.ghostMode, true);
+                    } else if (position == scheduledMessagesRow) {
+                        textCheckCell.setTextAndCheck("Schedule Messages", ExteraConfig.scheduledMessages, true);
                     } else if (position == disableNumberRoundingRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisableNumberRounding", R.string.DisableNumberRounding), "1.23K -> 1,234", ExteraConfig.disableNumberRounding, true, true);
                     } else if (position == formatTimeWithSecondsRow) {
