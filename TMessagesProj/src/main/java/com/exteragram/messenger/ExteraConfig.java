@@ -63,8 +63,6 @@ public class ExteraConfig {
     public static boolean useCameraXOptimizedMode;
     public static int cameraResolution;
 
-    public static boolean ghostMode;
-    public static boolean scheduledMessages;
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
     public static boolean disableProximitySensor;
@@ -119,6 +117,10 @@ public class ExteraConfig {
     public static boolean pauseOnMinimize;
     public static boolean disablePlayback;
 
+    // AyuGram
+    public static boolean ghostMode;
+    public static boolean scheduleMessages;
+
     // Updates
     public static long lastUpdateCheckTime;
     public static long updateScheduleTimestamp;
@@ -164,8 +166,6 @@ public class ExteraConfig {
             useCameraXOptimizedMode = preferences.getBoolean("useCameraXOptimizedMode", SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_HIGH);
             cameraResolution = preferences.getInt("cameraResolution", CameraXUtils.getCameraResolution());
 
-            ghostMode = preferences.getBoolean("ghostMode", false);
-            scheduledMessages = preferences.getBoolean("scheduledMessages", false);
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
             disableProximitySensor = preferences.getBoolean("disableProximitySensor", true);
@@ -255,6 +255,10 @@ public class ExteraConfig {
             pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
             doubleTapSeekDuration = preferences.getInt("doubleTapSeekDuration", 1);
             disablePlayback = preferences.getBoolean("disablePlayback", true);
+
+            // AyuGram
+            ghostMode = preferences.getBoolean("ghostMode", false);
+            scheduleMessages = preferences.getBoolean("scheduleMessages", false);
 
             // Updates
             lastUpdateCheckTime = preferences.getLong("lastUpdateCheckTime", 0);
