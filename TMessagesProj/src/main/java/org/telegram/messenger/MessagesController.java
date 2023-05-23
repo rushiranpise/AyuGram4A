@@ -16226,7 +16226,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
                 }
             }
-            if (scheduledDeletedMessagesFinal != null) {
+            if (scheduledDeletedMessagesFinal != null && false) {
                 for (int a = 0, size = scheduledDeletedMessagesFinal.size(); a < size; a++) {
                     long key = scheduledDeletedMessagesFinal.keyAt(a);
                     ArrayList<Integer> arrayList = scheduledDeletedMessagesFinal.valueAt(a);
