@@ -116,6 +116,7 @@ import com.exteragram.messenger.utils.SystemUtils;
 import com.exteragram.messenger.boost.BoostController;
 import com.exteragram.messenger.boost.encryption.EncryptionHelper;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.util.Log;
 import com.google.zxing.common.detector.MathUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
@@ -998,7 +999,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             NotificationCenter.userInfoDidLoad,
             NotificationCenter.pinnedInfoDidLoad,
             NotificationCenter.didSetNewWallpapper,
-            NotificationCenter.didApplyNewTheme
+            NotificationCenter.didApplyNewTheme,
+            NotificationCenter.ayugramMessagesDeleted
     };
 
     private final DialogInterface.OnCancelListener postponedScrollCancelListener = dialog -> {
@@ -2398,6 +2400,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         getNotificationCenter().addObserver(this, NotificationCenter.messageTranslated);
         getNotificationCenter().addObserver(this, NotificationCenter.messageTranslating);
 
+        getNotificationCenter().addObserver(this, NotificationCenter.ayugramMessagesDeleted);
+
         super.onFragmentCreate();
 
         if (chatMode == MODE_PINNED) {
@@ -2756,6 +2760,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             getNotificationCenter().removeObserver(this, NotificationCenter.didVerifyMessagesStickers);
         }
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.needSetDayNightTheme);
+
+        getNotificationCenter().removeObserver(this, NotificationCenter.ayugramMessagesDeleted);
 
         if (chatMode == 0 && AndroidUtilities.isTablet()) {
             getNotificationCenter().postNotificationName(NotificationCenter.openedChatChanged, dialog_id, getTopicId(), true);
@@ -17845,6 +17851,22 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                     if (chatAdapter != null) {
                         chatAdapter.invalidateRowWithMessageObject(currentMessage);
+                    }
+                }
+            }
+        } else if (id == NotificationCenter.ayugramMessagesDeleted) {
+            long did = (Long) args[0];
+            if (did != dialog_id && (ChatObject.isChannel(currentChat) || did != 0)) {
+                return;
+            }
+            ArrayList<Integer> arrayList = (ArrayList<Integer>) args[1];
+            for (int a = 0, N = arrayList.size(); a < N; a++) {
+                int mid = arrayList.get(a);
+                MessageObject currentMessage = messagesDict[0].get(mid);
+                if (currentMessage != null) {
+                    if (chatAdapter != null) {
+                        currentMessage.messageOwner.isDeleted = true;
+                        chatAdapter.updateRowWithMessageObject(currentMessage, false);
                     }
                 }
             }

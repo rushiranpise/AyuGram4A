@@ -283,6 +283,8 @@ public class NotificationCenter {
 
     public static int chatlistFolderUpdate = totalEvents++;
 
+    public static int ayugramMessagesDeleted = 6969;
+
     public static boolean alreadyLogged;
 
     private SparseArray<ArrayList<NotificationCenterDelegate>> observers = new SparseArray<>();

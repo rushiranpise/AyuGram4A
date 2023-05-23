@@ -12481,11 +12481,10 @@ public class MessagesStorage extends BaseController {
         return null;
     }
 
-    private List<Long> markMessagesAsIsDeletedInternal(Long dialogId, ArrayList<Integer> messages) {
+    private ArrayList<Long> markMessagesAsIsDeletedInternal(Long dialogId, ArrayList<Integer> messages) {
         try {
             SQLiteCursor cursor;
             String ids = TextUtils.join(",", messages);
-            List<Long> dialogsToUpdate = new ArrayList<>();
             if (dialogId != 0) {
                 cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, mid FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, dialogId));
             } else {
@@ -12497,19 +12496,22 @@ public class MessagesStorage extends BaseController {
                     int mid = cursor.intValue(1);
                     database.executeFast(String.format(Locale.US, "INSERT INTO telegraher_message_deletions values (%d,%d,1);", mid, did)).stepThis().dispose();
                 } catch (Exception e) {
-                    //we don't care, made to ignore unique key errors
+                    // we don't care, made to ignore unique key errors
                 }
             }
             cursor.dispose();
-            updateWidgets(dialogsToUpdate);
-            return dialogsToUpdate;
+            updateWidgets(dialogId);
+
+            var res = new ArrayList<Long>();
+            res.add(dialogId);
+            return res;
         } catch (Exception e) {
             FileLog.e(e);
         }
         return null;
     }
 
-    public List<Long> markMessagesAsIsDeleted(Long dialogId, ArrayList<Integer> messages, boolean useQueue) {
+    public ArrayList<Long> markMessagesAsIsDeleted(Long dialogId, ArrayList<Integer> messages, boolean useQueue) {
         if (messages == null || messages.isEmpty()) {
             return null;
         }
@@ -12519,17 +12521,6 @@ public class MessagesStorage extends BaseController {
             return markMessagesAsIsDeletedInternal(dialogId, messages);
         }
         return null;
-    }
-
-    public void markEcryptedMessagesIsDeleted(long did, int messagesOnly) {
-        storageQueue.postRunnable(() -> {
-            try {
-                database.executeFast(String.format(Locale.US, "UPDATE messages_v2 SET isdel=1 WHERE uid = %d;", did)).stepThis().dispose();
-                updateWidgets(did);
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-        });
     }
 
     private void updateDialogsWithDeletedMessagesInternal(long originalDialogId, long channelId, ArrayList<Integer> messages, ArrayList<Long> additionalDialogsToUpdate) {

@@ -13156,7 +13156,7 @@ public class MessagesController extends BaseController implements NotificationCe
             });
             // there was some todo...
             // idk what he mean https://github.com/nikitasius/Telegraher/commit/41401091620f2852ac42f3b44b52aa834bc7df11#diff-f1e213db76f4e6d7710500cdf0a04960e08cffadb30cc3fcf778a2126af44bcbR12608
-            List<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(dialogId, ids, false);
+            ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(dialogId, ids, false);
         });
     }
 
@@ -16225,7 +16225,6 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
                     }
                 }
-                deletedMessagesFinal.clear();
             }
             if (scheduledDeletedMessagesFinal != null) {
                 for (int a = 0, size = scheduledDeletedMessagesFinal.size(); a < size; a++) {
@@ -16291,11 +16290,14 @@ public class MessagesController extends BaseController implements NotificationCe
         if (deletedMessages != null) {
             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                 long key = deletedMessages.keyAt(a);
-                ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
+                ArrayList<Integer> deletedMessagesList = deletedMessages.valueAt(a);
                 getMessagesStorage().getStorageQueue().postRunnable(() -> {
-                    getMessagesStorage().markMessagesAsIsDeleted(key, arrayList, false);
+                    ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(key, deletedMessagesList, false);
+                    AndroidUtilities.runOnUIThread(() -> {
+                        // invalidating views
+                        getNotificationCenter().postNotificationName(NotificationCenter.ayugramMessagesDeleted, key, deletedMessagesList);
+                    });
                 });
-
             }
             deletedMessages.clear();
         }
