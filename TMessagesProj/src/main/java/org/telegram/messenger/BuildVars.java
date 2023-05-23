@@ -47,7 +47,7 @@ public class BuildVars {
         // Obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
         APP_HASH = BuildConfig.APP_HASH;
         // Obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
-        SMS_HASH = isBetaApp() ? "2P1CNXYRAK6" : "UfajQkYoxTu";
+        SMS_HASH = "0Ipuhesgkyf";
         // Using our SMS_HASH you will not be able to get the SMS Retriever to work, generate your own keys with https://raw.githubusercontent.com/googlearchive/android-credentials/master/sms-verification/bin/sms_retriever_hash_v9.sh
     }
 
