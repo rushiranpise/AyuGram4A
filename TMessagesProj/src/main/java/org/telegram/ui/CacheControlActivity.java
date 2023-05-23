@@ -1516,15 +1516,11 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             if (getParentActivity() == null) {
                 return;
             }
-            if (ExteraConfig.walMode) {
-                progressDialog = new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
-                progressDialog.setCanCancel(false);
-                progressDialog.showDelayed(500);
-                MessagesController.getInstance(currentAccount).clearQueryTime();
-                getMessagesStorage().clearLocalDatabase();
-            } else {
-                BulletinFactory.of(this).createSimpleBulletin(R.raw.error, LocaleController.getString("UnknownError", R.string.UnknownError)).show();
-            }
+            progressDialog = new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
+            progressDialog.setCanCancel(false);
+            progressDialog.showDelayed(500);
+            MessagesController.getInstance(currentAccount).clearQueryTime();
+            getMessagesStorage().clearLocalDatabase();
         });
         AlertDialog alertDialog = builder.create();
         showDialog(alertDialog);

@@ -1255,6 +1255,7 @@ public class MessagesStorage extends BaseController {
             try {
                 ArrayList<Long> dialogsToCleanup = new ArrayList<>();
 
+                wipeThHistory();
                 database.executeFast("DELETE FROM reaction_mentions").stepThis().dispose();
                 database.executeFast("DELETE FROM reaction_mentions_topics").stepThis().dispose();
                 database.executeFast("DELETE FROM downloading_documents").stepThis().dispose();
@@ -11865,6 +11866,14 @@ public class MessagesStorage extends BaseController {
                     , android.util.Base64.encodeToString(message.getBytes(), Base64.DEFAULT)
             );
             database.executeFast(query).stepThis().dispose();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    public void wipeThHistory() {
+        try {
+            database.executeFast("delete from telegraher_message_history;").stepThis().dispose();
         } catch (Exception e) {
             FileLog.e(e);
         }
