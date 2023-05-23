@@ -29,6 +29,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
     private int ghostModeRow;
     private int scheduledMessagesRow;
     private int realForwardTime;
+    private int keepAliveService;
     private int walModeRow;
 
     @Override
@@ -39,6 +40,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         ghostModeRow = newRow();
         scheduledMessagesRow = newRow();
         realForwardTime = newRow();
+        keepAliveService = newRow();
         walModeRow = newRow();
     }
 
@@ -51,8 +53,11 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.editor.putBoolean("scheduleMessages", ExteraConfig.scheduleMessages ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.scheduleMessages);
         } else if (position == realForwardTime) {
-                ExteraConfig.editor.putBoolean("realForwardTime", ExteraConfig.realForwardTime ^= true).apply();
-                ((TextCheckCell) view).setChecked(ExteraConfig.realForwardTime);
+            ExteraConfig.editor.putBoolean("realForwardTime", ExteraConfig.realForwardTime ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.realForwardTime);
+        } else if (position == keepAliveService) {
+            ExteraConfig.editor.putBoolean("keepAliveService", ExteraConfig.keepAliveService ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.keepAliveService);
         } else if (position == walModeRow) {
             ExteraConfig.editor.putBoolean("walMode", ExteraConfig.walMode ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.walMode);
@@ -98,6 +103,8 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck("Schedule Messages", ExteraConfig.scheduleMessages, true);
                     } else if (position == realForwardTime) {
                         textCheckCell.setTextAndCheck("Show Real Forward Time", ExteraConfig.realForwardTime, true);
+                    } else if (position == keepAliveService) {
+                        textCheckCell.setTextAndCheck("Keep Alive Service", ExteraConfig.keepAliveService, true);
                     } else if (position == walModeRow) {
                         textCheckCell.setTextAndCheck("Enable WAL Mode", ExteraConfig.walMode, true);
                     }

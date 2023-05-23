@@ -11,14 +11,53 @@ package org.telegram.messenger;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.IBinder;
 
+import androidx.core.app.NotificationChannelCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.exteragram.messenger.ExteraConfig;
+
+import java.util.Random;
+
 public class NotificationsService extends Service {
+
+    private static final String[] notifications = new String[]{
+            "Don't swipe me!",
+            "Letting you receive notifications…",
+            "Helping you receive pushes…",
+            "dontkillmyapp.com"
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         ApplicationLoader.postInitApplication();
+
+        if (ExteraConfig.keepAliveService && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String CHANNEL_ID = "ayugram_push";
+            NotificationChannelCompat channel = new NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                    .setName("AyuGram Push Service")
+                    .setLightsEnabled(false)
+                    .setVibrationEnabled(false)
+                    .setSound(null, null)
+                    .build();
+
+            var funnyText = notifications[new Random().nextInt(notifications.length)];
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            notificationManager.createNotificationChannel(channel);
+            startForeground(8888,
+                    new NotificationCompat.Builder(this, CHANNEL_ID)
+                            .setSmallIcon(R.drawable.msg_notifications)
+                            .setShowWhen(false)
+                            .setOngoing(true)
+                            .setContentText(funnyText)
+                            .setCategory(NotificationCompat.CATEGORY_STATUS)
+                            .build());
+        }
     }
 
     @Override

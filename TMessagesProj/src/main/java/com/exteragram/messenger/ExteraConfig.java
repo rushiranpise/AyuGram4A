@@ -121,6 +121,7 @@ public class ExteraConfig {
     public static boolean ghostMode;
     public static boolean scheduleMessages;
     public static boolean realForwardTime;
+    public static boolean keepAliveService;
     public static boolean walMode;
 
     // Updates
@@ -262,6 +263,7 @@ public class ExteraConfig {
             ghostMode = preferences.getBoolean("ghostMode", false);
             scheduleMessages = preferences.getBoolean("scheduleMessages", false);
             realForwardTime = preferences.getBoolean("realForwardTime", false);
+            keepAliveService = preferences.getBoolean("keepAliveService", true);
             walMode = preferences.getBoolean("walMode", true); // https://t.me/ayugramchat/966
 
             // Updates
