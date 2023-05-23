@@ -3052,9 +3052,7 @@ public class AndroidUtilities {
     }
 
     public static boolean isSimAvailable() {
-        TelephonyManager tm = (TelephonyManager) ApplicationLoader.applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
-        int state = tm.getSimState();
-        return state != TelephonyManager.SIM_STATE_ABSENT && state != TelephonyManager.SIM_STATE_UNKNOWN && tm.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE && !isAirplaneModeOn();
+        return true;
     }
 
     public static boolean isAirplaneModeOn() {
