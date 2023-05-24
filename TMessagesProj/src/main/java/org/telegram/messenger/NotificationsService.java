@@ -28,7 +28,13 @@ public class NotificationsService extends Service {
             "Don't swipe me!",
             "Letting you receive notifications…",
             "Helping you receive pushes…",
-            "dontkillmyapp.com"
+            "dontkillmyapp.com",
+            "⊂(◉‿◉)つ",
+            "(｡◕‿‿◕｡)",
+            "¯\\_(ツ)_/¯",
+            "\\(^-^)/",
+            "＼(＾O＾)／",
+            "ԅ(≖‿≖ԅ)"
     };
 
     @Override

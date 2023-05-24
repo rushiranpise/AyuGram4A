@@ -339,9 +339,7 @@ public class ConnectionsManager extends BaseController {
 
             if (object instanceof TLRPC.TL_account_updateStatus) {
                 var obj = ((TLRPC.TL_account_updateStatus) object);
-                if (!obj.offline) {
-                    obj.offline = true;
-                }
+                obj.offline = true;
 
                 Log.d("AyuGram", "Online status sending");
             }
