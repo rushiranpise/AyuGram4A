@@ -301,7 +301,9 @@ public class ConnectionsManager extends BaseController {
         return requestToken;
     }
 
-    private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connetionType, boolean immediate, int requestToken) {
+    private static boolean sendNextRead;
+
+    private void sendRequestInternal(TLObject object, RequestDelegate onCompleteOrig, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connetionType, boolean immediate, int requestToken) {
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }
@@ -316,20 +318,29 @@ public class ConnectionsManager extends BaseController {
                     object instanceof TLRPC.TL_channels_readHistory ||
                     object instanceof TLRPC.TL_channels_readMessageContents
             ) {
-                var fakeRes = new TLRPC.TL_messages_affectedMessages();
-                // idk if this should be -1 or what, check `TL_messages_readMessageContents` usages
-                fakeRes.pts = -1;
-                fakeRes.pts_count = 0;
+                if (!sendNextRead) {
+                    var fakeRes = new TLRPC.TL_messages_affectedMessages();
+                    // idk if this should be -1 or what, check `TL_messages_readMessageContents` usages
+                    fakeRes.pts = -1;
+                    fakeRes.pts_count = 0;
 
-                try {
-                    if (onComplete != null) {
-                        onComplete.run(fakeRes, null);
+                    try {
+                        if (onCompleteOrig != null) {
+                            onCompleteOrig.run(fakeRes, null);
+                        }
+                    } catch (Exception e) {
+                        FileLog.e(e);
                     }
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
 
-                return;
+                    if (object instanceof TLRPC.TL_messages_readHistory) {
+                        var asdasasd = (TLRPC.TL_messages_readHistory)object ;
+                        Log.d("AyuGram", "!! " + asdasasd.max_id + " ");
+                    }
+
+                    return;
+                } else {
+                    sendNextRead = false;
+                }
             }
 
             if (object instanceof TLRPC.TL_messages_setTyping) {
@@ -343,7 +354,39 @@ public class ConnectionsManager extends BaseController {
 
                 Log.d("AyuGram", "Online status sending");
             }
+
+            if (
+                    ExteraConfig.markReadAfterSend &&
+                    object instanceof TLRPC.TL_messages_sendMessage
+            ) {
+                var obj = ((TLRPC.TL_messages_sendMessage) object);
+                long dialogId;
+                if (obj.peer.chat_id != 0) {
+                    dialogId = -obj.peer.chat_id;
+                } else if (obj.peer.channel_id != 0) {
+                    dialogId = -obj.peer.channel_id;
+                } else {
+                    dialogId = obj.peer.user_id;
+                }
+
+                var origOnComplete = onCompleteOrig;
+                onCompleteOrig = (response, error) -> {
+                    origOnComplete.run(response, error);
+
+                    getMessagesStorage().getDialogMaxMessageId(dialogId, maxId -> {
+                        Log.d("AyuGram", maxId + "");
+
+                        sendNextRead = true;
+
+                        TLRPC.TL_messages_readHistory request = new TLRPC.TL_messages_readHistory();
+                        request.peer = obj.peer;
+                        request.max_id = maxId;
+                        sendRequest(request, (a1, a2) -> {});
+                    });
+                };
+            }
         }
+        final var onComplete = onCompleteOrig;
         try {
             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
             object.serializeToStream(buffer);

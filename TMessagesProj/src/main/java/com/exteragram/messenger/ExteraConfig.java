@@ -119,6 +119,7 @@ public class ExteraConfig {
 
     // AyuGram
     public static boolean ghostMode;
+    public static boolean markReadAfterSend;
     public static boolean scheduleMessages;
     public static boolean realForwardTime;
     public static boolean showFromChannel;
@@ -262,11 +263,12 @@ public class ExteraConfig {
 
             // AyuGram
             ghostMode = preferences.getBoolean("ghostMode", false);
+            markReadAfterSend = preferences.getBoolean("markReadAfterSend", false);
             scheduleMessages = preferences.getBoolean("scheduleMessages", false);
             realForwardTime = preferences.getBoolean("realForwardTime", false);
             showFromChannel = preferences.getBoolean("showFromChannel", false);
             keepAliveService = preferences.getBoolean("keepAliveService", true);
-            walMode = preferences.getBoolean("walMode", true); // https://t.me/ayugramchat/966
+            walMode = preferences.getBoolean("walMode", true); // https://t.me/ayugramchat/1/966
 
             // Updates
             lastUpdateCheckTime = preferences.getLong("lastUpdateCheckTime", 0);

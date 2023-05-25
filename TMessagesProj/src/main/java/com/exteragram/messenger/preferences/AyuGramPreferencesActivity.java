@@ -27,6 +27,7 @@ import org.telegram.ui.Cells.TextCheckCell;
 public class AyuGramPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int ghostModeRow;
+    private int markReadAfterSend;
     private int scheduledMessagesRow;
     private int realForwardTime;
     private int showFromChannel;
@@ -39,6 +40,7 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
 
         generalHeaderRow = newRow();
         ghostModeRow = newRow();
+        markReadAfterSend = newRow();
         scheduledMessagesRow = newRow();
         realForwardTime = newRow();
         showFromChannel = newRow();
@@ -51,6 +53,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         if (position == ghostModeRow) {
             ExteraConfig.editor.putBoolean("ghostMode", ExteraConfig.ghostMode ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.ghostMode);
+        } else if (position == markReadAfterSend) {
+            ExteraConfig.editor.putBoolean("markReadAfterSend", ExteraConfig.markReadAfterSend ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.markReadAfterSend);
         } else if (position == scheduledMessagesRow) {
             ExteraConfig.editor.putBoolean("scheduleMessages", ExteraConfig.scheduleMessages ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.scheduleMessages);
@@ -104,14 +109,16 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
                     textCheckCell.setEnabled(true, null);
                     if (position == ghostModeRow) {
                         textCheckCell.setTextAndCheck("Ghost Mode", ExteraConfig.ghostMode, true);
+                    } else if (position == markReadAfterSend) {
+                        textCheckCell.setTextAndCheck("Mark Messages Read After Send β", ExteraConfig.markReadAfterSend, true);
                     } else if (position == scheduledMessagesRow) {
-                        textCheckCell.setTextAndCheck("Schedule Messages", ExteraConfig.scheduleMessages, true);
+                        textCheckCell.setTextAndCheck("Schedule Messages β", ExteraConfig.scheduleMessages, true);
                     } else if (position == realForwardTime) {
                         textCheckCell.setTextAndCheck("Show Real Forward Time", ExteraConfig.realForwardTime, true);
                     } else if (position == showFromChannel) {
                         textCheckCell.setTextAndCheck("Show Channel Label", ExteraConfig.showFromChannel, true);
                     } else if (position == keepAliveService) {
-                        textCheckCell.setTextAndCheck("Keep Alive Service", ExteraConfig.keepAliveService, true);
+                        textCheckCell.setTextAndCheck("Keep Alive Service β (drains battery & RAM)", ExteraConfig.keepAliveService, true);
                     } else if (position == walModeRow) {
                         textCheckCell.setTextAndCheck("Enable WAL Mode", ExteraConfig.walMode, true);
                     }
