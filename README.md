@@ -56,3 +56,5 @@ at [Crowdin](https://crowdin.com/project/exteralocales)!
 
 - [exteraGram](https://github.com/exteraSquad/exteraGram)
 - [Telegraher](https://github.com/nikitasius/Telegraher)
+- [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)
+- [Nagram](https://github.com/NextAlone/Nagram)
