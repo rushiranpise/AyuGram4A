@@ -332,11 +332,6 @@ public class ConnectionsManager extends BaseController {
                         FileLog.e(e);
                     }
 
-                    if (object instanceof TLRPC.TL_messages_readHistory) {
-                        var asdasasd = (TLRPC.TL_messages_readHistory)object ;
-                        Log.d("AyuGram", "!! " + asdasasd.max_id + " ");
-                    }
-
                     return;
                 } else {
                     sendNextRead = false;
@@ -374,8 +369,6 @@ public class ConnectionsManager extends BaseController {
                     origOnComplete.run(response, error);
 
                     getMessagesStorage().getDialogMaxMessageId(dialogId, maxId -> {
-                        Log.d("AyuGram", maxId + "");
-
                         sendNextRead = true;
 
                         TLRPC.TL_messages_readHistory request = new TLRPC.TL_messages_readHistory();
