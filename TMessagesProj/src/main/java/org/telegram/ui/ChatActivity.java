@@ -25621,7 +25621,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         boolean preserveDim = false;
         switch (option) {
             case 420_001: {
-                presentFragment(new ThMessageHistory(selectedObject));
+                presentFragment(new ThMessageHistory(getUserConfig().clientUserId, selectedObject));
                 break;
             }
             case 420_003:{

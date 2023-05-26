@@ -24,6 +24,7 @@ import androidx.annotation.UiThread;
 import androidx.collection.LongSparseArray;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.radolyn.ayugram.messages.AyuMessagesController;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.SQLite.SQLiteCursor;
@@ -13545,7 +13546,7 @@ public class MessagesStorage extends BaseController {
                                     TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                     oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                     if (!oldMessage.message.equals(message.message) && message.from_id != null) {
-                                        saveThHistory(message.dialog_id, message.id, getConnectionsManager().getCurrentTime(), oldMessage.message);
+                                        AyuMessagesController.getInstance().onMessageEdited(oldMessage, message, getUserConfig().clientUserId, getConnectionsManager().getCurrentTime());
                                     }
                                     data.reuse();
                                     int send_state = cursor.intValue(5);

@@ -1,0 +1,86 @@
+package com.radolyn.ayugram.messages;
+
+import androidx.room.Room;
+
+import com.google.android.exoplayer2.util.Log;
+import com.radolyn.ayugram.database.AyuDatabase;
+import com.radolyn.ayugram.database.entities.EditedMessage;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.MessageObject;
+import org.telegram.tgnet.TLRPC;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+public class AyuMessagesController {
+    private static final String attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), "ayuAttachments").getPath();
+    private static AyuMessagesController instance;
+    private final AyuDatabase database;
+
+    private AyuMessagesController() {
+        ApplicationLoader.applicationContext.deleteDatabase("ayu-data");
+        database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuDatabase.class, "ayu-data")
+                .allowMainThreadQueries()
+                .build();
+    }
+
+    public static AyuMessagesController getInstance() {
+        if (instance == null) {
+            instance = new AyuMessagesController();
+        }
+        return instance;
+    }
+
+    public void onMessageEdited(TLRPC.Message oldMessage, TLRPC.Message newMessage, long userId, int currentTime) {
+        boolean sameMedia = false;
+        boolean isDocument = false;
+        if (oldMessage.media instanceof TLRPC.TL_messageMediaPhoto && newMessage.media instanceof TLRPC.TL_messageMediaPhoto && oldMessage.media.photo != null && newMessage.media.photo != null) {
+            sameMedia = oldMessage.media.photo.id == newMessage.media.photo.id;
+        } else if (oldMessage.media instanceof TLRPC.TL_messageMediaDocument && newMessage.media instanceof TLRPC.TL_messageMediaDocument && oldMessage.media.document != null && newMessage.media.document != null) {
+            sameMedia = oldMessage.media.document.id == newMessage.media.document.id;
+            isDocument = true;
+        }
+
+        var revision = new EditedMessage();
+
+        var attachPathFile = new File(oldMessage.attachPath);
+
+        if (!sameMedia && attachPathFile.exists()) {
+            var filename = attachPathFile.getName();
+            var dest = new File(attachmentsPath, filename);
+
+            // copy file, because it's likely to be deleted by Telegram in a few seconds
+            boolean success;
+            try {
+                success = AndroidUtilities.copyFile(attachPathFile, dest);
+            } catch (IOException e) {
+                Log.d("AyuGram", e.toString());
+                success = false;
+            }
+
+            if (success) {
+                revision.path = dest.getAbsolutePath();
+                revision.isDocument = isDocument;
+            }
+        }
+
+        var dialogId = MessageObject.getDialogId(oldMessage);
+        var messageId = newMessage.id;
+
+        revision.userId = userId;
+        revision.dialogId = dialogId;
+        revision.messageId = messageId;
+        revision.text = oldMessage.message;
+        revision.date = currentTime;
+
+        database.editedMessageDao().insert(revision);
+    }
+
+
+    public List<EditedMessage> getRevisions(long userId, long dialogId, int msgId) {
+        return database.editedMessageDao().getAllRevisions(userId, dialogId, msgId);
+    }
+}

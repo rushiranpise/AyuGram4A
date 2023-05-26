@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "241188506271-qa0vj8retq732m23dgurh852nrr7h8o6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.radolyn.ayugram",
+            "certificate_hash": "f27d68285b107eb06cf14c74bb866368f1fbdc7f"
+          }
+        },
+        {
           "client_id": "241188506271-3n5ru8fm0kn3ujr5tphajrtpu076dqa7.apps.googleusercontent.com",
           "client_type": 3
         }

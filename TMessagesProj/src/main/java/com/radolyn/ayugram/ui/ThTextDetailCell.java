@@ -1,22 +1,3 @@
-/**
- * Copyright 2022  Nikita S. <nikita@saraeff.net>
- * <p>
- * This file is part of Telegraher.
- * <p>
- * Telegraher is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * Telegraher is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with Telegraher.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.radolyn.ayugram.ui;
 
 import android.content.Context;
@@ -31,6 +12,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
@@ -46,7 +28,7 @@ public class ThTextDetailCell extends FrameLayout {
     private boolean needDivider;
     private boolean contentDescriptionValueFirst;
 
-    private Theme.ResourcesProvider resourcesProvider;
+    private final Theme.ResourcesProvider resourcesProvider;
 
     public ThTextDetailCell(Context context) {
         this(context, null);
