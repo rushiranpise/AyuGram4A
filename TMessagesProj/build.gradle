@@ -140,13 +140,13 @@ android {
 
     buildTypes {
         debug {
-            debuggable false
+            debuggable true
             jniDebuggable false
             signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             multiDexEnabled true
-            zipAlignEnabled true
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
             buildConfigField "boolean", "DEBUG_VERSION", "true"

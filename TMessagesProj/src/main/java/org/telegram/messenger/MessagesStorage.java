@@ -13545,9 +13545,6 @@ public class MessagesStorage extends BaseController {
                                 if (data != null) {
                                     TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                     oldMessage.readAttachPath(data, getUserConfig().clientUserId);
-                                    if (!oldMessage.message.equals(message.message) && message.from_id != null) {
-                                        AyuMessagesController.getInstance().onMessageEdited(oldMessage, message, getUserConfig().clientUserId, getConnectionsManager().getCurrentTime());
-                                    }
                                     data.reuse();
                                     int send_state = cursor.intValue(5);
                                     if (send_state != 3) {
@@ -13561,6 +13558,9 @@ public class MessagesStorage extends BaseController {
                                         sameMedia = oldMessage.media.photo.id == message.media.photo.id;
                                     } else if (oldMessage.media instanceof TLRPC.TL_messageMediaDocument && message.media instanceof TLRPC.TL_messageMediaDocument && oldMessage.media.document != null && message.media.document != null) {
                                         sameMedia = oldMessage.media.document.id == message.media.document.id;
+                                    }
+                                    if (message.from_id != null && (!oldMessage.message.equals(message.message) || !sameMedia)) {
+                                        AyuMessagesController.getInstance().onMessageEdited(oldMessage, message, getUserConfig().clientUserId, getAccountInstance().getCurrentAccount(), getConnectionsManager().getCurrentTime());
                                     }
                                     if (!sameMedia) {
                                         addFilesToDelete(oldMessage, filesToDelete, idsToDelete, namesToDelete, false);

@@ -8,6 +8,7 @@ import com.radolyn.ayugram.database.entities.EditedMessage;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.MessageObject;
 import org.telegram.tgnet.TLRPC;
 
@@ -16,12 +17,16 @@ import java.io.IOException;
 import java.util.List;
 
 public class AyuMessagesController {
-    private static final String attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), "ayuAttachments").getPath();
+    private static final File attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), "Saved Attachments");
     private static AyuMessagesController instance;
     private final AyuDatabase database;
 
     private AyuMessagesController() {
         ApplicationLoader.applicationContext.deleteDatabase("ayu-data");
+        if (attachmentsPath.exists()) {
+            attachmentsPath.delete();
+        }
+        attachmentsPath.mkdirs();
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuDatabase.class, "ayu-data")
                 .allowMainThreadQueries()
                 .build();
@@ -34,7 +39,7 @@ public class AyuMessagesController {
         return instance;
     }
 
-    public void onMessageEdited(TLRPC.Message oldMessage, TLRPC.Message newMessage, long userId, int currentTime) {
+    public void onMessageEdited(TLRPC.Message oldMessage, TLRPC.Message newMessage, long userId, int accountId, int currentTime) {
         boolean sameMedia = false;
         boolean isDocument = false;
         if (oldMessage.media instanceof TLRPC.TL_messageMediaPhoto && newMessage.media instanceof TLRPC.TL_messageMediaPhoto && oldMessage.media.photo != null && newMessage.media.photo != null) {
@@ -46,7 +51,7 @@ public class AyuMessagesController {
 
         var revision = new EditedMessage();
 
-        var attachPathFile = new File(oldMessage.attachPath);
+        var attachPathFile = FileLoader.getInstance(accountId).getPathToMessage(oldMessage);
 
         if (!sameMedia && attachPathFile.exists()) {
             var filename = attachPathFile.getName();

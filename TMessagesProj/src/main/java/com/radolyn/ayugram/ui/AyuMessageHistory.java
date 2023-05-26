@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.radolyn.ayugram.database.entities.EditedMessage;
 import com.radolyn.ayugram.messages.AyuMessagesController;
 
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
@@ -28,7 +26,6 @@ import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
-import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
@@ -77,19 +74,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
         });
         listView.setVerticalScrollBarEnabled(true);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        listView.setAdapter(adapter = new AyuMessageHistory.ListAdapter(context));
-        listView.setOnItemClickListener((view, position, x, y) -> {
-            if (getParentActivity() == null) {
-                return;
-            }
-
-            if (position >= 0 && position < messages.size()) {
-                BulletinFactory.of(this).createSimpleBulletin(R.drawable.msg_info, LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("thMessageHistory", ((AyuMessageDetailCell) view).getValue());
-                clipboard.setPrimaryClip(clip);
-            }
-        });
+        listView.setAdapter(adapter = new AyuMessageHistory.ListAdapter(context, this));
 
         return fragmentView;
     }
@@ -151,10 +136,12 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
 
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
 
-        private final Context mContext;
+        private final Context context;
+        private final AyuMessageHistory fragment;
 
-        public ListAdapter(Context context) {
-            mContext = context;
+        public ListAdapter(Context context, AyuMessageHistory fragment) {
+            this.context = context;
+            this.fragment = fragment;
         }
 
         @Override
@@ -172,7 +159,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
             View view;
             switch (viewType) {
                 case 1:
-                    view = new AyuMessageDetailCell(mContext);
+                    view = new AyuMessageDetailCell(context, fragment, null);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 default:
