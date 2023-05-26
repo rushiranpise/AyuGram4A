@@ -14,6 +14,7 @@ import com.radolyn.ayugram.messages.AyuMessagesController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
@@ -37,7 +38,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
     private RecyclerListView listView;
     private AyuMessageHistory.ListAdapter adapter;
     private LinearLayoutManager layoutManager;
-    private int rowCount;
+    private final int rowCount;
 
     public AyuMessageHistory(long userId, MessageObject messageObject) {
         var messagesController = AyuMessagesController.getInstance();
@@ -47,9 +48,25 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
 
     @Override
     public View createView(Context context) {
+        var firstMsg = messages.get(0);
+        var peer = getAccountInstance().getMessagesController().getUserOrChat(firstMsg.dialogId);
+
+        String name;
+        if (peer == null) {
+            name = "?"; // wtf
+        } else if (peer instanceof TLRPC.User) {
+            name = ((TLRPC.User) peer).first_name;
+        } else if (peer instanceof TLRPC.Chat) {
+            name = ((TLRPC.Chat) peer).title;
+        } else {
+            name = "Message history";
+        }
+
+        var title = name + " (" + firstMsg.messageId + ")";
+
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
-        actionBar.setTitle("Message history");
+        actionBar.setTitle(title);
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -108,8 +125,8 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCheckCell.class}, new String[]{"checkBox"}, null, null, null, Theme.key_switchTrack));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCheckCell.class}, new String[]{"checkBox"}, null, null, null, Theme.key_switchTrackChecked));
 
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{AyuMessageDetailCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{AyuMessageDetailCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
+        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{AyuMessageCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
+        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{AyuMessageCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
 
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ChatActionCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ChatActionCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
@@ -157,27 +174,56 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view;
-            switch (viewType) {
-                case 1:
-                    view = new AyuMessageDetailCell(context, fragment, null);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                    break;
-                default:
-                    view = null;
-                    break;
+            if (viewType == 1) {
+                view = new AyuMessageCell(context);
+            } else {
+                view = null;
             }
             return new RecyclerListView.Holder(view);
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            switch (holder.getItemViewType()) {
-                case 1: {
-                    AyuMessageDetailCell ayuMessageDetailCell = (AyuMessageDetailCell) holder.itemView;
-                    ayuMessageDetailCell.setEditedMessage(messages.get(position));
-                    ayuMessageDetailCell.setId(position);
-                    break;
-                }
+            if (holder.getItemViewType() == 1) {
+                var ayuMessageDetailCell = (AyuMessageCell) holder.itemView;
+
+                var editedMessage = messages.get(position);
+
+                // shamefully copied from Extera's sticker size preview
+                var msg = new TLRPC.TL_message();
+                msg.message = editedMessage.text;
+                msg.date = (int) editedMessage.date;
+                msg.dialog_id = -1;
+                msg.flags = 259;
+                msg.id = 2;
+                msg.out = false;
+                msg.peer_id = new TLRPC.TL_peerUser();
+                msg.peer_id.user_id = 1;
+
+                msg.attachPath = editedMessage.path;
+
+                msg.media = new TLRPC.TL_messageMediaPhoto();
+                msg.media.flags |= 3;
+                msg.media.photo = new TLRPC.TL_photo();
+                msg.media.photo.file_reference = new byte[0];
+                msg.media.photo.has_stickers = false;
+                msg.media.photo.id = 1;
+                msg.media.photo.access_hash = 0;
+                msg.media.photo.date = (int) editedMessage.date;
+                TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
+                photoSize.size = 0;
+                photoSize.w = 500;
+                photoSize.h = 302;
+                photoSize.type = "s";
+                photoSize.location = new TLRPC.TL_fileLocationUnavailable();
+                msg.media.photo.sizes.add(photoSize);
+                msg.attachPath = editedMessage.path;
+
+                var messageObject = new MessageObject(getCurrentAccount(), msg, true, false);
+                messageObject.useCustomPhoto = true;
+
+                ayuMessageDetailCell.setMessageObject(messageObject, null, false, false);
+                ayuMessageDetailCell.setId(position);
             }
         }
 
