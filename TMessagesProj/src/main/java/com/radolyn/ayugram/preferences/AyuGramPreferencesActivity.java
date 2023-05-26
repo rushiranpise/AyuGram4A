@@ -13,6 +13,7 @@ package com.radolyn.ayugram.preferences;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.preferences.BasePreferencesActivity;
 
+import org.telegram.ui.ActionBar.AlertDialog;
+import org.telegram.ui.Cells.EditTextSettingsCell;
 import org.telegram.ui.Cells.HeaderCell;
+import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextCheckCell;
 
 public class AyuGramPreferencesActivity extends BasePreferencesActivity {
@@ -41,6 +45,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
     private int showFromChannel;
     private int keepAliveService;
     private int walModeRow;
+
+    private int customizationHeaderRow;
+    private int deletedMarkText;
 
     @Override
     protected void updateRowsId() {
@@ -63,6 +70,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         showFromChannel = newRow();
         keepAliveService = newRow();
         walModeRow = newRow();
+
+        customizationHeaderRow = newRow();
+        deletedMarkText = newRow();
     }
 
     @Override
@@ -103,6 +113,23 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         } else if (position == walModeRow) {
             ExteraConfig.editor.putBoolean("walMode", ExteraConfig.walMode ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.walMode);
+        } else if (position == deletedMarkText) {
+            var builder = new AlertDialog.Builder(getParentActivity());
+            builder.setTitle("Change deleted mark text");
+            var layout = new LinearLayout(getParentActivity());
+            var input = new EditTextSettingsCell(getParentActivity());
+            input.setText(ExteraConfig.getDeletedMark(), true);
+
+            layout.setGravity(LinearLayout.VERTICAL);
+            layout.addView(input);
+            builder.setView(layout);
+            builder.setPositiveButton("Save", (dialog, which) -> {
+                ExteraConfig.editor.putString("deletedMarkText", input.getText()).apply();
+                ((TextCell) view).setTextAndValue("Deleted mark text", ExteraConfig.getDeletedMark(), true);
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.show();
         }
     }
 
@@ -130,6 +157,12 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, boolean payload) {
             switch (holder.getItemViewType()) {
+                case 2:
+                    TextCell textCell = (TextCell) holder.itemView;
+                    if (position == deletedMarkText) {
+                        textCell.setTextAndValue("Deleted mark", ExteraConfig.getDeletedMark(), true);
+                    }
+                    break;
                 case 3:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
                     if (position == ghostEssentialsHeaderRow) {
@@ -138,6 +171,8 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
                         headerCell.setText("Spy essentials");
                     } else if (position == qolHeaderRow) {
                         headerCell.setText("QoL toggles");
+                    } else if (position == customizationHeaderRow) {
+                        headerCell.setText("Customization");
                     }
                     break;
                 case 5:
@@ -174,10 +209,13 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (
+            if (position == deletedMarkText) {
+                return 2;
+            } else if (
                     position == ghostEssentialsHeaderRow ||
                             position == spyHeaderRow ||
-                            position == qolHeaderRow
+                            position == qolHeaderRow ||
+                            position == customizationHeaderRow
             ) {
                 return 3;
             }

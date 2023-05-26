@@ -412,6 +412,10 @@ public class ExteraConfig {
         }
     }
 
+    public static String getDeletedMark() {
+        return ExteraConfig.preferences.getString("deletedMarkText", "🧹");
+    }
+
     public static void clearPreferences() {
         configLoaded = false;
         ExteraConfig.editor.clear().apply();
