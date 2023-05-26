@@ -118,9 +118,14 @@ public class ExteraConfig {
     public static boolean disablePlayback;
 
     // AyuGram
-    public static boolean ghostMode;
+    public static boolean sendReadPackets;
+    public static boolean sendOnlinePackets;
+    public static boolean sendOfflinePacketAfterOnline;
+    public static boolean sendUploadProgress;
+    public static boolean useScheduledMessages;
+    public static boolean keepDeletedMessages;
+    public static boolean keepMessagesHistory;
     public static boolean markReadAfterSend;
-    public static boolean scheduleMessages;
     public static boolean realForwardTime;
     public static boolean showFromChannel;
     public static boolean keepAliveService;
@@ -262,9 +267,21 @@ public class ExteraConfig {
             disablePlayback = preferences.getBoolean("disablePlayback", true);
 
             // AyuGram
-            ghostMode = preferences.getBoolean("ghostMode", false);
+            // ~ Ghost essentials
+            sendReadPackets = preferences.getBoolean("sendReadPackets", true);
+            sendOnlinePackets = preferences.getBoolean("sendOnlinePackets", true);
+            sendUploadProgress = preferences.getBoolean("sendUploadProgress", true);
+
+            sendOfflinePacketAfterOnline = preferences.getBoolean("sendOfflinePacketAfterOnline", false);
             markReadAfterSend = preferences.getBoolean("markReadAfterSend", false);
-            scheduleMessages = preferences.getBoolean("scheduleMessages", false);
+
+            useScheduledMessages = preferences.getBoolean("useScheduledMessages", false);
+
+            // ~ Message edits & deletion history
+            keepDeletedMessages = preferences.getBoolean("keepDeletedMessages", false);
+            keepMessagesHistory = preferences.getBoolean("keepMessagesHistory", false);
+
+            // ~ Utils
             realForwardTime = preferences.getBoolean("realForwardTime", false);
             showFromChannel = preferences.getBoolean("showFromChannel", false);
             keepAliveService = preferences.getBoolean("keepAliveService", true);

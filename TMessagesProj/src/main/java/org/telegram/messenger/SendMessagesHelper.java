@@ -3717,7 +3717,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             }
             newMsg.params = params;
             if (retryMessageObject == null || !retryMessageObject.resendAsIs) {
-                if (ExteraConfig.scheduleMessages && scheduleDate == 0) {
+                if (ExteraConfig.useScheduledMessages && scheduleDate == 0) {
                     scheduleDate = getAccountInstance().getConnectionsManager().getCurrentTime() + 10; // min t = 10 sec
 
                     // ..but here's the problem:

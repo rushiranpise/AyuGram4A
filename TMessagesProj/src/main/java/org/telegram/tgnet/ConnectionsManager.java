@@ -301,22 +301,38 @@ public class ConnectionsManager extends BaseController {
         return requestToken;
     }
 
+    // little hack to allow read messages
     private static boolean sendNextRead;
 
     private void sendRequestInternal(TLObject object, RequestDelegate onCompleteOrig, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connetionType, boolean immediate, int requestToken) {
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("send request " + object + " with token = " + requestToken);
         }
-        if (ExteraConfig.ghostMode) {
+
+        // --- AyuGram request hook
+        {
+            if (!ExteraConfig.sendUploadProgress && object instanceof TLRPC.TL_messages_setTyping) {
+                // no need to run `onComplete`
+                return;
+            }
+
+            if (!ExteraConfig.sendOnlinePackets && object instanceof TLRPC.TL_account_updateStatus) {
+                var obj = ((TLRPC.TL_account_updateStatus) object);
+                obj.offline = true;
+            }
+
             if (
-                    object instanceof TLRPC.TL_messages_readDiscussion ||
-                    object instanceof TLRPC.TL_messages_readEncryptedHistory ||
-                    object instanceof TLRPC.TL_messages_readHistory ||
-                    object instanceof TLRPC.TL_messages_readMentions ||
-                    object instanceof TLRPC.TL_messages_readMessageContents ||
-                    object instanceof TLRPC.TL_messages_readReactions ||
-                    object instanceof TLRPC.TL_channels_readHistory ||
-                    object instanceof TLRPC.TL_channels_readMessageContents
+                !ExteraConfig.sendReadPackets &&
+                    (
+                        object instanceof TLRPC.TL_messages_readDiscussion ||
+                        object instanceof TLRPC.TL_messages_readEncryptedHistory ||
+                        object instanceof TLRPC.TL_messages_readHistory ||
+                        object instanceof TLRPC.TL_messages_readMentions ||
+                        object instanceof TLRPC.TL_messages_readMessageContents ||
+                        object instanceof TLRPC.TL_messages_readReactions ||
+                        object instanceof TLRPC.TL_channels_readHistory ||
+                        object instanceof TLRPC.TL_channels_readMessageContents
+                    )
             ) {
                 if (!sendNextRead) {
                     var fakeRes = new TLRPC.TL_messages_affectedMessages();
@@ -336,18 +352,6 @@ public class ConnectionsManager extends BaseController {
                 } else {
                     sendNextRead = false;
                 }
-            }
-
-            if (object instanceof TLRPC.TL_messages_setTyping) {
-                // no need to run `onComplete`
-                return;
-            }
-
-            if (object instanceof TLRPC.TL_account_updateStatus) {
-                var obj = ((TLRPC.TL_account_updateStatus) object);
-                obj.offline = true;
-
-                Log.d("AyuGram", "Online status sending");
             }
 
             if (
@@ -380,6 +384,8 @@ public class ConnectionsManager extends BaseController {
             }
         }
         final var onComplete = onCompleteOrig;
+        // --- AyuGram request hook
+
         try {
             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
             object.serializeToStream(buffer);

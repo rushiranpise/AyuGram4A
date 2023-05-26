@@ -6920,7 +6920,7 @@ public class MessagesController extends BaseController implements NotificationCe
         checkReadTasks();
 
         if (getUserConfig().isClientActivated()) {
-            if (ExteraConfig.ghostMode) {
+            if (ExteraConfig.sendOfflinePacketAfterOnline) {
                 if (getUser(getUserConfig().clientUserId) != null && !statusUpdating) {
                     // this one doesn't get updated if you send message, so there's no other way to
                     // understand if we're online
@@ -6954,7 +6954,7 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
 
                         TLRPC.TL_account_updateStatus req = new TLRPC.TL_account_updateStatus();
-                        req.offline = ExteraConfig.ghostMode;
+                        req.offline = ExteraConfig.sendOnlinePackets;
                         statusRequest = getConnectionsManager().sendRequest(req, (response, error) -> {
                             if (error == null) {
                                 lastStatusUpdateTime = System.currentTimeMillis();
