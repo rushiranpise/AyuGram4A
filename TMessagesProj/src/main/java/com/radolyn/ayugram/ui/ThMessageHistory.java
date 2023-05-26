@@ -17,10 +17,9 @@
  * along with Telegraher.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.exteragram.messenger.telegrapher.ui;
+package com.radolyn.ayugram.ui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -42,7 +41,6 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SlideChooseView;
 import org.telegram.ui.QrActivity;
 
-import java.io.File;
 import java.util.*;
 
 public class ThMessageHistory extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
@@ -50,7 +48,7 @@ public class ThMessageHistory extends BaseFragment implements NotificationCenter
     private final Map<Integer, ThHistoryMessage> messageMap;
     private final MessageObject messageObject;
 
-    private com.exteragram.messenger.telegrapher.ui.ThMessageHistory.ListAdapter adapter;
+    private ThMessageHistory.ListAdapter adapter;
     @SuppressWarnings("FieldCanBeLocal")
     private LinearLayoutManager layoutManager;
 

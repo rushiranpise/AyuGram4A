@@ -110,13 +110,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
-import com.exteragram.messenger.telegrapher.ui.ThMessageHistory;
+import com.radolyn.ayugram.ui.ThMessageHistory;
 import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.SystemUtils;
 import com.exteragram.messenger.boost.BoostController;
 import com.exteragram.messenger.boost.encryption.EncryptionHelper;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.util.Log;
 import com.google.zxing.common.detector.MathUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;

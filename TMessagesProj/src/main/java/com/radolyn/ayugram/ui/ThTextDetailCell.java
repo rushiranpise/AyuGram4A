@@ -17,7 +17,7 @@
  * along with Telegraher.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.exteragram.messenger.telegrapher.ui;
+package com.radolyn.ayugram.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;

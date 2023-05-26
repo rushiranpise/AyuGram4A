@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.preferences.components.InfoSettingsCell;
 import com.exteragram.messenger.preferences.updater.UpdaterBottomSheet;
+import com.radolyn.ayugram.preferences.AyuGramPreferencesActivity;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;

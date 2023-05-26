@@ -9,7 +9,7 @@
 
 */
 
-package com.exteragram.messenger.preferences;
+package com.radolyn.ayugram.preferences;
 
 import android.content.Context;
 import android.view.View;
@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.preferences.BasePreferencesActivity;
 
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
@@ -163,9 +164,9 @@ public class AyuGramPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == showFromChannel) {
                         textCheckCell.setTextAndCheck("Show «channel» label", ExteraConfig.showFromChannel, true);
                     } else if (position == keepAliveService) {
-                        textCheckCell.setTextAndCheck("Keep Alive Service β (drains battery & RAM)", ExteraConfig.keepAliveService, true);
+                        textCheckCell.setTextAndCheck("Keep Alive Service β", ExteraConfig.keepAliveService, true);
                     } else if (position == walModeRow) {
-                        textCheckCell.setTextAndCheck("Enable WAL Mode", ExteraConfig.walMode, true);
+                        textCheckCell.setTextAndCheck("Enable WAL mode", ExteraConfig.walMode, true);
                     }
                     break;
             }
