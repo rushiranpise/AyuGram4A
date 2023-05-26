@@ -110,7 +110,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
-import com.radolyn.ayugram.ui.ThMessageHistory;
+import com.radolyn.ayugram.ui.AyuMessageHistory;
 import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.SystemUtils;
 import com.exteragram.messenger.boost.BoostController;
@@ -25621,7 +25621,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         boolean preserveDim = false;
         switch (option) {
             case 420_001: {
-                presentFragment(new ThMessageHistory(getUserConfig().clientUserId, selectedObject));
+                presentFragment(new AyuMessageHistory(getUserConfig().clientUserId, selectedObject));
                 break;
             }
             case 420_003:{
