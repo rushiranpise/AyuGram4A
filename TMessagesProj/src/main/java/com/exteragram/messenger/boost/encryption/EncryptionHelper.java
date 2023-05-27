@@ -37,4 +37,12 @@ public class EncryptionHelper {
     public static void setEncryptorTypeFor(long dialog_id, int i) {
 
     }
+
+    public static MessageObject decryptMessage(MessageObject selectedObject, MessageObject.GroupedMessages selectedObjectGroup) {
+        return null;
+    }
+
+    public static boolean isEncrypted(MessageObject editingMessageObject, Object o) {
+        return false;
+    }
 }

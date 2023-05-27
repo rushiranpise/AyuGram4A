@@ -66,7 +66,7 @@ public class AyuMessagesController {
             return;
         }
 
-        boolean sameMedia = true;
+        boolean sameMedia = false;
         boolean isDocument = false;
         if (oldMessage.media instanceof TLRPC.TL_messageMediaPhoto && newMessage.media instanceof TLRPC.TL_messageMediaPhoto && oldMessage.media.photo != null && newMessage.media.photo != null) {
             sameMedia = oldMessage.media.photo.id == newMessage.media.photo.id;
@@ -99,7 +99,7 @@ public class AyuMessagesController {
 
         var attachPath = attachPathFile.getAbsolutePath();
 
-        revision.path = sameMedia ? null : attachPath;
+        revision.path = attachPath.equals("/") ? null : attachPath;
         revision.isDocument = isDocument;
 
         var dao = database.editedMessageDao();
@@ -107,7 +107,7 @@ public class AyuMessagesController {
         var dialogId = MessageObject.getDialogId(oldMessage);
         var messageId = newMessage.id;
 
-        if (!sameMedia && dao.isFirstRevisionWithChangedMedia(userId, dialogId, messageId)) {
+        if (!sameMedia && revision.path != null && dao.isFirstRevisionWithChangedMedia(userId, dialogId, messageId)) {
             // update previous revisions to reflect media change
             // like, there's no previous file, so replace it with one we copied before...
             dao.updateAttachmentForRevisionsBeforeDate(userId, dialogId, messageId, attachPath, currentTime);
