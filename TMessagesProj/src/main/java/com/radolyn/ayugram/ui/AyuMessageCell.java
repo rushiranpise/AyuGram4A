@@ -36,5 +36,8 @@ public class AyuMessageCell extends ChatMessageCell {
         if (!loadedAttachment && getMessageObject().useCustomPhoto) {
             getPhotoImage().setImage(getMessageObject().messageOwner.attachPath, null, locationLoadingThumb, null, 0);
         }
+
+        getMessageObject().isDownloadingFile = false;
+        getMessageObject().loadingCancelled = true;
     }
 }

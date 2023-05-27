@@ -31,6 +31,7 @@ import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,26 +203,40 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
                 if (editedMessage.path != null) {
                     msg.attachPath = editedMessage.path;
 
-                    msg.media = new TLRPC.TL_messageMediaPhoto();
-                    msg.media.flags |= 3;
-                    msg.media.photo = new TLRPC.TL_photo();
-                    msg.media.photo.file_reference = new byte[0];
-                    msg.media.photo.has_stickers = false;
-                    msg.media.photo.id = Utilities.random.nextInt();
-                    msg.media.photo.access_hash = 0;
-                    msg.media.photo.date = (int) editedMessage.date;
-                    TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
-                    photoSize.size = 0;
-                    photoSize.w = 500;
-                    photoSize.h = 302;
-                    photoSize.type = "s";
-                    photoSize.location = new TLRPC.TL_fileLocationUnavailable();
-                    msg.media.photo.sizes.add(photoSize);
-                    msg.attachPath = editedMessage.path;
+                    if (!editedMessage.isDocument) {
+                        msg.media = new TLRPC.TL_messageMediaPhoto();
+                        msg.media.flags |= 3;
+                        msg.media.photo = new TLRPC.TL_photo();
+                        msg.media.photo.file_reference = new byte[0];
+                        msg.media.photo.has_stickers = false;
+                        msg.media.photo.id = Utilities.random.nextInt();
+                        msg.media.photo.access_hash = 0;
+                        msg.media.photo.date = (int) editedMessage.date;
+                        TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
+                        photoSize.size = 0;
+                        photoSize.w = 500;
+                        photoSize.h = 302;
+                        photoSize.type = "s";
+                        photoSize.location = new TLRPC.TL_fileLocationUnavailable();
+                        msg.media.photo.sizes.add(photoSize);
+                        msg.attachPath = editedMessage.path;
+                    } else {
+                        msg.media = new TLRPC.TL_messageMediaDocument();
+                        msg.media.flags |= 1;
+
+                        var file = new File(editedMessage.path);
+                        msg.media.document = new TLRPC.TL_document();
+                        msg.media.document.file_reference = new byte[0];
+                        msg.media.document.access_hash = 0;
+                        msg.media.document.date = (int) editedMessage.date;
+                        msg.media.document.localPath = editedMessage.path;
+                        msg.media.document.file_name = file.getName();
+                        msg.media.document.size = file.length();
+                    }
                 }
 
                 var messageObject = new MessageObject(getCurrentAccount(), msg, true, false);
-                messageObject.useCustomPhoto = editedMessage.path != null;
+                messageObject.useCustomPhoto = editedMessage.path != null && !editedMessage.isDocument;
 
                 ayuMessageDetailCell.setMessageObject(messageObject, null, false, false);
                 ayuMessageDetailCell.setId(position);
