@@ -55,9 +55,9 @@ public class NotificationsService extends Service {
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
             notificationManager.createNotificationChannel(channel);
-            startForeground(8888,
+            startForeground(9999,
                     new NotificationCompat.Builder(this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.msg_notifications)
+                            .setSmallIcon(R.drawable.msg_premium_badge)
                             .setShowWhen(false)
                             .setOngoing(true)
                             .setContentText(funnyText)
