@@ -175,7 +175,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view;
             if (viewType == 1) {
-                view = new AyuMessageCell(context);
+                view = new AyuMessageCell(context, getParentActivity(), AyuMessageHistory.this);
             } else {
                 view = null;
             }
@@ -239,6 +239,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
                 messageObject.useCustomPhoto = editedMessage.path != null && !editedMessage.isDocument;
 
                 ayuMessageDetailCell.setMessageObject(messageObject, null, false, false);
+                ayuMessageDetailCell.setEditedMessage(editedMessage);
                 ayuMessageDetailCell.setId(position);
             }
         }

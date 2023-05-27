@@ -1,19 +1,28 @@
 package com.radolyn.ayugram.ui;
 
+import android.app.Activity;
 import android.content.Context;
 
+import com.radolyn.ayugram.database.entities.EditedMessage;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.DocumentObject;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SvgHelper;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.ChatMessageCell;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ClipRoundedDrawable;
 
 public class AyuMessageCell extends ChatMessageCell {
     private final ClipRoundedDrawable locationLoadingThumb;
     private final boolean loadedAttachment;
+    private EditedMessage editedMessage;
 
-    public AyuMessageCell(Context context) {
+    public AyuMessageCell(Context context, Activity activity, BaseFragment fragment) {
         super(context);
 
         setFullyDraw(true);
@@ -26,6 +35,23 @@ public class AyuMessageCell extends ChatMessageCell {
         locationLoadingThumb = new ClipRoundedDrawable(svgThumb);
 
         loadedAttachment = false;
+
+        setOnClickListener(v -> {
+            if (editedMessage.text != null && !editedMessage.text.equals("")) {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("thMessageHistory", editedMessage.text);
+                clipboard.setPrimaryClip(clip);
+                BulletinFactory.of(fragment).createSimpleBulletin(R.drawable.msg_info, LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
+            }
+
+            if (editedMessage.path != null) {
+                AndroidUtilities.openForView(getMessageObject(), activity, null);
+            }
+        });
+    }
+
+    public void setEditedMessage(EditedMessage editedMessage) {
+        this.editedMessage = editedMessage;
     }
 
     @Override

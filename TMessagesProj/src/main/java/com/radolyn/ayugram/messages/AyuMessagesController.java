@@ -1,5 +1,7 @@
 package com.radolyn.ayugram.messages;
 
+import android.os.Environment;
+
 import androidx.room.Room;
 
 import com.google.android.exoplayer2.util.Log;
@@ -8,6 +10,7 @@ import com.radolyn.ayugram.database.entities.EditedMessage;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.MessageObject;
 import org.telegram.tgnet.TLRPC;
@@ -18,7 +21,11 @@ import java.util.List;
 
 public class AyuMessagesController {
     public static final String attachmentsSubfolder = "Saved Attachments";
-    private static final File attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), attachmentsSubfolder);
+    private static final File attachmentsPath = new File(
+            new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), BuildVars.APP_NAME),
+            attachmentsSubfolder
+    );
     private static AyuMessagesController instance;
     private final AyuDatabase database;
 
@@ -28,6 +35,11 @@ public class AyuMessagesController {
             attachmentsPath.delete();
         }
         attachmentsPath.mkdirs();
+        try {
+            new File(attachmentsPath, ".nomedia").createNewFile();
+        } catch (IOException e) {
+            // ignored, I hate java
+        }
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuDatabase.class, "ayu-data")
                 .allowMainThreadQueries()
                 .build();
