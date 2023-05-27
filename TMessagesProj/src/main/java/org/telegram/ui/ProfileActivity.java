@@ -7547,6 +7547,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     newString2 = LocaleController.getString("Online", R.string.Online);
                 }
+
+                if (!ExteraConfig.sendReadPackets || ExteraConfig.sendOfflinePacketAfterOnline) {
+                    newString2 = "likely offline";
+                }
             } else if (user.id == 333000 || user.id == 777000 || user.id == 42777) {
                 newString2 = LocaleController.getString("ServiceNotifications", R.string.ServiceNotifications);
             } else if (MessagesController.isSupportUser(user)) {

@@ -25624,7 +25624,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 presentFragment(new AyuMessageHistory(getUserConfig().clientUserId, selectedObject));
                 break;
             }
-            case 420_003:{
+            case 420_003: {
                 sendSecretMessageRead(selectedObject, true);
                 break;
             }
