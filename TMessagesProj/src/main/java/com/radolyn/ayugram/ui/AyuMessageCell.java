@@ -39,7 +39,7 @@ public class AyuMessageCell extends ChatMessageCell {
         setOnClickListener(v -> {
             if (editedMessage.text != null && !editedMessage.text.equals("")) {
                 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("thMessageHistory", editedMessage.text);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("ayuMessageHistory", editedMessage.text);
                 clipboard.setPrimaryClip(clip);
                 BulletinFactory.of(fragment).createSimpleBulletin(R.drawable.msg_info, LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
             }
