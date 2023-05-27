@@ -19,7 +19,6 @@ import org.telegram.ui.Components.ClipRoundedDrawable;
 
 public class AyuMessageCell extends ChatMessageCell {
     private final ClipRoundedDrawable locationLoadingThumb;
-    private final boolean loadedAttachment;
     private EditedMessage editedMessage;
 
     public AyuMessageCell(Context context, Activity activity, BaseFragment fragment) {
@@ -33,8 +32,6 @@ public class AyuMessageCell extends ChatMessageCell {
         SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(R.raw.map_placeholder, Theme.key_chat_outLocationIcon, (Theme.isCurrentThemeDark() ? 3 : 6) * .12f);
         svgThumb.setAspectCenter(true);
         locationLoadingThumb = new ClipRoundedDrawable(svgThumb);
-
-        loadedAttachment = false;
 
         setOnClickListener(v -> {
             if (editedMessage.text != null && !editedMessage.text.equals("")) {
@@ -59,11 +56,13 @@ public class AyuMessageCell extends ChatMessageCell {
         super.onLayout(changed, left, top, right, bottom);
 
         // dirty hack to load our image instead of default one
-        if (!loadedAttachment && getMessageObject().useCustomPhoto) {
+        if (getMessageObject().useCustomPhoto) {
             getPhotoImage().setImage(getMessageObject().messageOwner.attachPath, null, locationLoadingThumb, null, 0);
         }
 
-        getMessageObject().isDownloadingFile = false;
-        getMessageObject().loadingCancelled = true;
+        if (editedMessage.path != null && !editedMessage.path.equals("")) {
+            getMessageObject().isDownloadingFile = false;
+            getMessageObject().loadingCancelled = true;
+        }
     }
 }

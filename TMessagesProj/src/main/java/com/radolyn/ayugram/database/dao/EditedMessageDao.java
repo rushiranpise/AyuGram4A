@@ -20,6 +20,9 @@ public interface EditedMessageDao {
     @Query("SELECT NOT EXISTS(SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId AND path LIKE '%" + AyuMessagesController.attachmentsSubfolder + "%')")
     boolean isFirstRevisionWithChangedMedia(long userId, long dialogId, long messageId);
 
+    @Query("SELECT EXISTS(SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId)")
+    boolean hasAnyRevisions(long userId, long dialogId, long messageId);
+
     @Query("SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId AND date = :date")
     EditedMessage getRevision(long userId, long dialogId, long messageId, long date);
 

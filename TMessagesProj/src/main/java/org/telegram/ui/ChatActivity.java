@@ -110,6 +110,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
+import com.radolyn.ayugram.messages.AyuMessagesController;
 import com.radolyn.ayugram.ui.AyuMessageHistory;
 import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.SystemUtils;
@@ -24037,7 +24038,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (message != null
                     && ((message.messageOwner.flags & TLRPC.MESSAGE_FLAG_EDITED) != 0 || message.isEditing())
                     && message.messageOwner.from_id != null
-                    && message.messageOwner.from_id.user_id != getAccountInstance().getUserConfig().getClientUserId()) {
+                    && message.messageOwner.from_id.user_id != getAccountInstance().getUserConfig().getClientUserId()
+                    && AyuMessagesController.getInstance().hasAnyRevisions(getAccountInstance().getUserConfig().getClientUserId(), dialog_id, message.messageOwner.id)) {
                 items.add("History");
                 options.add(420_001);
                 icons.add(R.drawable.msg_log);
