@@ -43,12 +43,14 @@ public class BuildVars {
         BUILD_VERSION = BuildConfig.VERSION_CODE;
         BUILD_VERSION_STRING = BuildConfig.VERSION_NAME;
 
-        APP_ID = BuildConfig.APP_ID;
         // Obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
-        APP_HASH = BuildConfig.APP_HASH;
-        // Obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
-        SMS_HASH = "0Ipuhesgkyf";
+        APP_ID = BuildConfig.APP_ID;
+
         // Using our SMS_HASH you will not be able to get the SMS Retriever to work, generate your own keys with https://raw.githubusercontent.com/googlearchive/android-credentials/master/sms-verification/bin/sms_retriever_hash_v9.sh
+        APP_HASH = BuildConfig.APP_HASH;
+
+        // Using our SMS_HASH you will not be able to get the SMS Retriever to work, generate your own keys with https://raw.githubusercontent.com/googlearchive/android-credentials/master/sms-verification/bin/sms_retriever_hash_v9.sh
+        SMS_HASH = "0Ipuhesgkyf";
     }
 
     public static boolean useInvoiceBilling() {

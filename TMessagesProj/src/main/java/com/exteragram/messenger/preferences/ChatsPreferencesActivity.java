@@ -164,11 +164,11 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
             seekBar = new AltSeekbar(context, (float p) -> {
                 ExteraConfig.editor.putFloat("stickerSize", ExteraConfig.stickerSize = p).apply();
-                StickerSizeCell.this.invalidate();
+                invalidate();
                 if (resetItem.getVisibility() != VISIBLE) {
                     AndroidUtilities.updateViewVisibilityAnimated(resetItem, true, 0.5f, true);
                 }
-            }, false, startStickerSize, endStickerSize, LocaleController.getString("StickerSize", R.string.StickerSize), LocaleController.getString("StickerSizeLeft", R.string.StickerSizeLeft), LocaleController.getString("StickerSizeRight", R.string.StickerSizeRight));
+            }, startStickerSize, endStickerSize, LocaleController.getString("StickerSize", R.string.StickerSize), LocaleController.getString("StickerSizeLeft", R.string.StickerSizeLeft), LocaleController.getString("StickerSizeRight", R.string.StickerSizeRight));
             seekBar.setProgress((ExteraConfig.stickerSize - startStickerSize) / (float) (endStickerSize - startStickerSize));
             addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
@@ -191,7 +191,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             super.invalidate();
             lastWidth = -1;
             messagesCell.invalidate();
-            seekBar.setProgress((ExteraConfig.stickerSize - startStickerSize) / (float) (endStickerSize - startStickerSize));
             seekBar.invalidate();
         }
     }
@@ -368,8 +367,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             PopupUtils.showDialog(videoMessagesCamera, LocaleController.getString("VideoMessagesCamera", R.string.VideoMessagesCamera), ExteraConfig.videoMessagesCamera, getContext(), which -> {
                 int old = ExteraConfig.videoMessagesCamera;
                 ExteraConfig.editor.putInt("videoMessagesCamera", ExteraConfig.videoMessagesCamera = which).apply();
-                if (old == which)
+                if (old == which) {
                     return;
+                }
                 if (old == 2 && ExteraConfig.videoMessagesCamera != 2) {
                     updateRowsId();
                     listAdapter.notifyItemInserted(rememberLastUsedCameraRow);
@@ -393,7 +393,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             ((TextCheckCell) view).setChecked(ExteraConfig.disablePlayback);
             showBulletin();
         } else if (position == doubleTapSeekDurationRow) {
-            if (getParentActivity()==null) {
+            if (getParentActivity() == null) {
                 return;
             }
             PopupUtils.showDialog(doubleTapSeekDuration, LocaleController.getString("DoubleTapSeekDuration", R.string.DoubleTapSeekDuration), ExteraConfig.doubleTapSeekDuration, getContext(), which -> {
