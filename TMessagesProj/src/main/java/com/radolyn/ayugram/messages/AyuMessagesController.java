@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import androidx.room.Room;
 
+import com.exteragram.messenger.ExteraConfig;
 import com.google.android.exoplayer2.util.Log;
 import com.radolyn.ayugram.database.AyuDatabase;
 import com.radolyn.ayugram.database.entities.EditedMessage;
@@ -30,16 +31,20 @@ public class AyuMessagesController {
     private final AyuDatabase database;
 
     private AyuMessagesController() {
-        ApplicationLoader.applicationContext.deleteDatabase("ayu-data");
-        if (attachmentsPath.exists()) {
-            attachmentsPath.delete();
+        // recreate for testing if debug
+        if (ExteraConfig.getLogging()) {
+            ApplicationLoader.applicationContext.deleteDatabase("ayu-data");
+            if (attachmentsPath.exists()) {
+                attachmentsPath.delete();
+            }
+            attachmentsPath.mkdirs();
+            try {
+                new File(attachmentsPath, ".nomedia").createNewFile();
+            } catch (IOException e) {
+                // ignored, I hate java
+            }
         }
-        attachmentsPath.mkdirs();
-        try {
-            new File(attachmentsPath, ".nomedia").createNewFile();
-        } catch (IOException e) {
-            // ignored, I hate java
-        }
+
         database = Room.databaseBuilder(ApplicationLoader.applicationContext, AyuDatabase.class, "ayu-data")
                 .allowMainThreadQueries()
                 .build();
