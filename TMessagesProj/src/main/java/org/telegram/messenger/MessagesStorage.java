@@ -11925,7 +11925,14 @@ public class MessagesStorage extends BaseController {
                     for (int a = 0, N = dialogs.size(); a < N; a++) {
                         long dialogId = dialogs.keyAt(a);
                         ArrayList<Integer> mids = dialogs.valueAt(a);
-                        markMessagesAsIsDeletedInternal(dialogId, mids);
+                        if (!ExteraConfig.keepDeletedMessages) {
+                            AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, mids, 0L, false));
+                            updateDialogsWithReadMessagesInternal(mids, null, null, null, null);
+                            markMessagesAsDeletedInternal(dialogId, mids, true, false);
+                            updateDialogsWithDeletedMessagesInternal(dialogId, 0, mids, null);
+                        } else {
+                            markMessagesAsIsDeletedInternal(dialogId, mids);
+                        }
                     }
                 }
             } catch (Exception e) {

@@ -58,6 +58,10 @@ public class AyuMessagesController {
     }
 
     public void onMessageEdited(TLRPC.Message oldMessage, TLRPC.Message newMessage, long userId, int accountId, int currentTime) {
+        if (!ExteraConfig.keepMessagesHistory) {
+            return;
+        }
+
         boolean sameMedia = false;
         boolean isDocument = false;
         if (oldMessage.media instanceof TLRPC.TL_messageMediaPhoto && newMessage.media instanceof TLRPC.TL_messageMediaPhoto && oldMessage.media.photo != null && newMessage.media.photo != null) {

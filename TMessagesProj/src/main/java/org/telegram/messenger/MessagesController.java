@@ -13131,12 +13131,19 @@ public class MessagesController extends BaseController implements NotificationCe
     protected void deleteMessagesByPush(long dialogId, ArrayList<Integer> ids, long channelId) {
         getMessagesStorage().getStorageQueue().postRunnable(() -> {
             AndroidUtilities.runOnUIThread(() -> {
+                if (!ExteraConfig.keepDeletedMessages) {
+                    getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, ids, channelId, false);
+                }
                 if (channelId == 0) {
                     for (int b = 0, size2 = ids.size(); b < size2; b++) {
                         Integer id = ids.get(b);
                         MessageObject obj = dialogMessagesByIds.get(id);
                         if (obj != null) {
-                            obj.messageOwner.isDeleted = true;
+                            if (ExteraConfig.keepDeletedMessages) {
+                                obj.messageOwner.isDeleted = true;
+                            } else {
+                                obj.deleted = true;
+                            }
                         }
                     }
                 } else {
@@ -13146,7 +13153,11 @@ public class MessagesController extends BaseController implements NotificationCe
                             MessageObject obj = objs.get(i);
                             for (int b = 0, size2 = ids.size(); b < size2; b++) {
                                 if (obj.getId() == ids.get(b)) {
-                                    obj.messageOwner.isDeleted = true;
+                                    if (ExteraConfig.keepDeletedMessages) {
+                                        obj.messageOwner.isDeleted = true;
+                                    } else {
+                                        obj.deleted = true;
+                                    }
                                     break;
                                 }
                             }
@@ -13154,9 +13165,16 @@ public class MessagesController extends BaseController implements NotificationCe
                     }
                 }
             });
-            // there was some todo...
-            // idk what he mean https://github.com/nikitasius/Telegraher/commit/41401091620f2852ac42f3b44b52aa834bc7df11#diff-f1e213db76f4e6d7710500cdf0a04960e08cffadb30cc3fcf778a2126af44bcbR12608
-            ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(dialogId, ids, false);
+
+            if (ExteraConfig.keepDeletedMessages) {
+                // there was some todo...
+                // idk what he mean https://github.com/nikitasius/Telegraher/commit/41401091620f2852ac42f3b44b52aa834bc7df11#diff-f1e213db76f4e6d7710500cdf0a04960e08cffadb30cc3fcf778a2126af44bcbR12608
+                ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(dialogId, ids, false);
+            } else {
+                getMessagesStorage().deletePushMessages(dialogId, ids);
+                ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsDeleted(dialogId, ids, false, true, false);
+                getMessagesStorage().updateDialogsWithDeletedMessages(dialogId, channelId, ids, dialogIds, false);
+            }
         });
     }
 
@@ -16197,6 +16215,9 @@ public class MessagesController extends BaseController implements NotificationCe
                     if (arrayList == null) {
                         continue;
                     }
+                    if (!ExteraConfig.keepDeletedMessages) {
+                        getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, arrayList, -dialogId, false);
+                    }
                     if (dialogId == 0) {
                         for (int b = 0, size2 = arrayList.size(); b < size2; b++) {
                             Integer id = arrayList.get(b);
@@ -16205,7 +16226,11 @@ public class MessagesController extends BaseController implements NotificationCe
                                 if (BuildVars.LOGS_ENABLED) {
                                     FileLog.d("mark messages " + obj.getId() + " deleted");
                                 }
-                                obj.messageOwner.isDeleted = true;
+                                if (ExteraConfig.keepDeletedMessages) {
+                                    obj.messageOwner.isDeleted = true;
+                                } else {
+                                    obj.deleted = true;
+                                }
                             }
                         }
                     } else {
@@ -16216,7 +16241,11 @@ public class MessagesController extends BaseController implements NotificationCe
                                 if (obj != null) {
                                     for (int b = 0, size2 = arrayList.size(); b < size2; b++) {
                                         if (obj.getId() == arrayList.get(b)) {
-                                            obj.messageOwner.isDeleted = true;
+                                            if (ExteraConfig.keepDeletedMessages) {
+                                                obj.messageOwner.isDeleted = true;
+                                            } else {
+                                                obj.deleted = true;
+                                            }
                                             break;
                                         }
                                     }
@@ -16224,6 +16253,9 @@ public class MessagesController extends BaseController implements NotificationCe
                             }
                         }
                     }
+                }
+                if (!ExteraConfig.keepDeletedMessages) {
+                    getNotificationsController().removeDeletedMessagesFromNotifications(deletedMessagesFinal, false);
                 }
             }
             if (scheduledDeletedMessagesFinal != null) {
@@ -16292,14 +16324,22 @@ public class MessagesController extends BaseController implements NotificationCe
                 long key = deletedMessages.keyAt(a);
                 ArrayList<Integer> deletedMessagesList = deletedMessages.valueAt(a);
                 getMessagesStorage().getStorageQueue().postRunnable(() -> {
-                    ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(key, deletedMessagesList, false);
-                    AndroidUtilities.runOnUIThread(() -> {
-                        // invalidating views
-                        getNotificationCenter().postNotificationName(NotificationCenter.ayugramMessagesDeleted, key, deletedMessagesList);
-                    });
+                    if (!ExteraConfig.keepDeletedMessages) {
+                        ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsDeleted(key, deletedMessagesList, false, true, false);
+                        getMessagesStorage().updateDialogsWithDeletedMessages(key, -key, deletedMessagesList, dialogIds, false);
+                    } else {
+                        ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsIsDeleted(key, deletedMessagesList, false);
+                        AndroidUtilities.runOnUIThread(() -> {
+                            // invalidating views
+                            getNotificationCenter().postNotificationName(NotificationCenter.ayugramMessagesDeleted, key, deletedMessagesList);
+                        });
+                    }
                 });
             }
-            deletedMessages.clear();
+
+            if (ExteraConfig.keepDeletedMessages) {
+                deletedMessages.clear();
+            }
         }
         if (scheduledDeletedMessages != null) {
             for (int a = 0, size = scheduledDeletedMessages.size(); a < size; a++) {

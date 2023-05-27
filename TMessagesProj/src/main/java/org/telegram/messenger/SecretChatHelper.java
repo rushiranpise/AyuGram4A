@@ -15,6 +15,8 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.messenger.support.LongSparseIntArray;
 import org.telegram.tgnet.AbstractSerializedData;
@@ -115,7 +117,11 @@ public class SecretChatHelper extends BaseController {
                 for (int a = 0; a < pendingEncMessagesToDeleteCopy.size(); a++) {
                     MessageObject messageObject = getMessagesController().dialogMessagesByRandomIds.get(pendingEncMessagesToDeleteCopy.get(a));
                     if (messageObject != null) {
-                        messageObject.messageOwner.isDeleted = true;
+                        if (ExteraConfig.keepDeletedMessages) {
+                            messageObject.messageOwner.isDeleted = true;
+                        } else {
+                            messageObject.deleted = true;
+                        }
                     }
                 }
             });
@@ -1142,6 +1148,22 @@ public class SecretChatHelper extends BaseController {
                 } else if (serviceMessage.action instanceof TLRPC.TL_decryptedMessageActionFlushHistory) {
                     long did = DialogObject.makeEncryptedDialogId(chat.id);
                     AndroidUtilities.runOnUIThread(() -> {
+                        if (!ExteraConfig.keepDeletedMessages) {
+                            TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(did);
+                            if (dialog != null) {
+                                dialog.unread_count = 0;
+                                getMessagesController().dialogMessage.remove(dialog.id);
+                            }
+                            getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> {
+                                getNotificationsController().processReadMessages(null, did, 0, Integer.MAX_VALUE, false);
+                                LongSparseIntArray dialogsToUpdate = new LongSparseIntArray(1);
+                                dialogsToUpdate.put(did, 0);
+                                getNotificationsController().processDialogsUpdateRead(dialogsToUpdate);
+                            }));
+                            getMessagesStorage().deleteDialog(did, 1);
+                            getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload);
+                            getNotificationCenter().postNotificationName(NotificationCenter.removeAllMessagesFromDialog, did, false, null);
+                        }
                     });
                     return null;
                 } else if (serviceMessage.action instanceof TLRPC.TL_decryptedMessageActionDeleteMessages) {
