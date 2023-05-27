@@ -25,7 +25,9 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public class ExteraConfig {
     public static boolean centerTitle;
     public static int tabIcons; // icons with titles - 0, titles - 1, icons - 2
     public static int tabStyle;
-    public static int actionBarTitle;
+    public static int titleText;
 
     public static boolean useSolarIcons;
 
@@ -56,7 +58,7 @@ public class ExteraConfig {
 
     public static int eventType;
     public static boolean alternativeOpenAnimation;
-    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
+    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr;
 
     // General
     public static int cameraType;
@@ -65,7 +67,6 @@ public class ExteraConfig {
 
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
-    public static boolean disableProximitySensor;
     public static int tabletMode;
 
     public static int downloadSpeedBoost;
@@ -138,7 +139,7 @@ public class ExteraConfig {
 
     // Other
     private static final long[] OFFICIAL_CHANNELS = {1905581924, 1794457129, 1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281, 1877362358};
-    private static final long[] DEVS = {139303278, 963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711, 5330087923L};
+    private static final long[] DEVS = {139303278, 963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711, 5330087923L, 666154369};
     public static long channelToSave;
     public static String targetLanguage;
     public static final CharSequence[] supportedLanguages = new CharSequence[]{
@@ -178,7 +179,6 @@ public class ExteraConfig {
 
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            disableProximitySensor = preferences.getBoolean("disableProximitySensor", true);
             tabletMode = preferences.getInt("tabletMode", 0);
 
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
@@ -198,7 +198,7 @@ public class ExteraConfig {
             tabCounter = preferences.getBoolean("tabCounter", true);
             tabIcons = preferences.getInt("tabIcons", 1);
             tabStyle = preferences.getInt("tabStyle", 4);
-            actionBarTitle = preferences.getInt("actionBarTitle", 2);
+            titleText = preferences.getInt("titleText", 2);
 
             useSolarIcons = preferences.getBoolean("useSolarIcons", true);
 
@@ -218,13 +218,11 @@ public class ExteraConfig {
             newSecretChat = preferences.getBoolean("newSecretChat", true);
             newChannel = preferences.getBoolean("newChannel", true);
             contacts = preferences.getBoolean("contacts", false);
-            calls = preferences.getBoolean("calls", false);
+            calls = preferences.getBoolean("calls", true);
             peopleNearby = preferences.getBoolean("peopleNearby", false);
             archivedChats = preferences.getBoolean("archivedChats", false);
             savedMessages = preferences.getBoolean("savedMessages", true);
             scanQr = preferences.getBoolean("scanQr", true);
-            inviteFriends = preferences.getBoolean("inviteFriends", false);
-            telegramFeatures = preferences.getBoolean("telegramFeatures", false);
 
             // Chats
             stickerSize = preferences.getFloat("stickerSize", 14.0f);
@@ -352,15 +350,10 @@ public class ExteraConfig {
                 editor.putBoolean("scanQr", scanQr ^= true).apply();
                 break;
             case 10:
-                editor.putBoolean("inviteFriends", inviteFriends ^= true).apply();
-                break;
-            case 11:
-                editor.putBoolean("telegramFeatures", telegramFeatures ^= true).apply();
-                break;
-            case 12:
                 editor.putBoolean("changeStatus", changeStatus ^= true).apply();
                 break;
         }
+        NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.mainUserInfoChanged);
     }
 
     public static void setChannelToSave(long id) {
@@ -393,11 +386,10 @@ public class ExteraConfig {
             case 0:
                 return 800;
             case 1:
+            default:
                 return 1280;
             case 2:
                 return 2560;
-            default:
-                return 1;
         }
     }
 

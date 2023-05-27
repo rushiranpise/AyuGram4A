@@ -168,6 +168,7 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.ChatAvatarContainer;
+import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.DialogsItemAnimator;
 import org.telegram.ui.Components.EditTextBoldCursor;
@@ -2537,6 +2538,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         return actionBar;
     }
 
+    private String actionBarDefaultTitle;
+
     @Override
     public View createView(final Context context) {
         searching = false;
@@ -2736,6 +2739,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 actionBar.setTitle(LocaleController.getString("SelectChat", R.string.SelectChat));
             }
+            actionBarDefaultTitle = actionBar.getTitle();
             actionBar.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefault));
         } else {
             if (searchString != null || folderId != 0) {
@@ -2757,6 +2761,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     actionBar.setTitle(LocaleUtils.getActionBarTitle());
                 }
             }
+            actionBarDefaultTitle = actionBar.getTitle();
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
             }
@@ -3052,26 +3057,26 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     showDeleteAlert(getMessagesController().getDialogFilters().get(id));
                 }
 
-//                private int lastTitleType = ExteraConfig.tabIcons;
-//
-//                @Override
-//                public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
-//                    if (ExteraConfig.tabIcons != 2) {
-//                        if (lastTitleType == 2) {
-//                            actionBar.setTitle(actionBarDefaultTitle);
-//                            lastTitleType = ExteraConfig.tabIcons;
-//                        }
-//                        return;
-//                    }
-//                    if (!selectedDialogs.isEmpty()) {
-//                        return;
-//                    }
-//                    if (animated) {
-//                        actionBar.setTitleAnimatedX(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null, forward, 200);
-//                    } else {
-//                        actionBar.setTitle(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null);
-//                    }
-//                }
+                private int lastTitleType = ExteraConfig.titleText;
+
+                @Override
+                public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
+                    if (ExteraConfig.tabIcons != 2 || lastTitleType != ExteraConfig.titleText) {
+                        actionBar.setTitle(actionBarDefaultTitle = LocaleUtils.getActionBarTitle(), statusDrawable);
+                        lastTitleType = ExteraConfig.titleText;
+                        if (ExteraConfig.tabIcons != 2) {
+                            return;
+                        }
+                    }
+                    if (!selectedDialogs.isEmpty()) {
+                        return;
+                    }
+                    if (animated) {
+                        actionBar.setTitleAnimatedX(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null, forward, 350);
+                    } else {
+                        actionBar.setTitle(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null);
+                    }
+                }
             });
         }
 
@@ -3922,7 +3927,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             fragmentLocationContextView.setAdditionalContextView(fragmentContextView);
 
             dialogsHintCell = new DialogsHintCell(context);
-            dialogsHintCell.setBackground(Theme.AdaptiveRipple.filledRect());
+            dialogsHintCell.setVisibility(View.GONE);
             updateDialogsHint();
             CacheControlActivity.calculateTotalSize(size -> {
                 cacheSize = size;
@@ -4328,10 +4333,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (folderId == 1) {
                 avatarContainer.getSubtitleTextView().setVisibility(View.GONE);
                 avatarContainer.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
-                AvatarDrawable avatarDrawable = new AvatarDrawable();
-                avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_ARCHIVED);
-                avatarDrawable.setColor(getThemedColor(SharedConfig.archiveHidden ? Theme.key_avatar_backgroundArchivedHidden : Theme.key_avatar_backgroundArchived));
-                avatarContainer.getAvatarImageView().setImage(null, null, avatarDrawable, 42, 0);
+                CombinedDrawable thumbDrawable = CanvasUtils.createRoundRectDrawableWithIcon(AndroidUtilities.dp(42), ExteraConfig.getAvatarCorners(42), R.drawable.chats_archive);
+                thumbDrawable.setIconSize(AndroidUtilities.dp(22), AndroidUtilities.dp(22));
+                Theme.setCombinedDrawableColor(thumbDrawable, getThemedColor(Theme.key_avatar_backgroundArchivedHidden), false);
+                Theme.setCombinedDrawableColor(thumbDrawable, getThemedColor(Theme.key_avatar_text), true);
+                avatarContainer.getAvatarImageView().setImageDrawable(thumbDrawable);
             } else {
                 avatarContainer.setTitle(UserObject.getUserName(currentUser));
                 avatarContainer.setSubtitle(LocaleController.formatUserStatus(currentAccount, currentUser));
@@ -4671,12 +4677,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void updateDialogsHint() {
-        if (dialogsHintCell == null) {
+        if (dialogsHintCell == null || true) {
             return;
         }
         if (isPremiumRestoreHintVisible()) {
             dialogsHintCell.setVisibility(View.VISIBLE);
             dialogsHintCell.setOnClickListener(v -> {
+                if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) return;
                 presentFragment(new PremiumPreviewFragment("dialogs_hint").setSelectAnnualByDefault());
                 AndroidUtilities.runOnUIThread(() -> {
                     MessagesController.getInstance(currentAccount).removeSuggestion(0, "PREMIUM_RESTORE");
@@ -4695,6 +4702,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else if (isPremiumHintVisible()) {
             dialogsHintCell.setVisibility(View.VISIBLE);
             dialogsHintCell.setOnClickListener(v -> {
+                if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) return;
                 presentFragment(new PremiumPreviewFragment("dialogs_hint").setSelectAnnualByDefault());
                 AndroidUtilities.runOnUIThread(() -> {
                     MessagesController.getInstance(currentAccount).removeSuggestion(0, isPremiumHintUpgrade ? "PREMIUM_UPGRADE" : "PREMIUM_ANNUAL");
@@ -4713,6 +4721,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else if (isCacheHintVisible()) {
             dialogsHintCell.setVisibility(View.VISIBLE);
             dialogsHintCell.setOnClickListener(v -> {
+                if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) return;
                 presentFragment(new CacheControlActivity());
                 AndroidUtilities.runOnUIThread(() -> {
                     resetCacheHintVisible();
@@ -5499,7 +5508,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     viewPages[a].listView.requestLayout();
                     viewPages[a].requestLayout();
                 }
-
+                if (!actionBarDefaultTitle.equals(actionBar.getTitle())) {
+                    if (animated) {
+                        actionBar.setTitleAnimatedX(actionBarDefaultTitle, statusDrawable, false, 350);
+                    } else {
+                        actionBar.setTitle(actionBarDefaultTitle, statusDrawable);
+                    }
+                }
                 filterTabsView.resetTabId();
             }
             updateDrawerSwipeEnabled();
@@ -7158,7 +7173,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             filterTabsView.setTranslationY(value);
         }
         if (dialogsHintCell != null) {
-            dialogsHintCell.setTranslationY(value);
+            if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment() && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE) {
+                float tabsYOffset = (1f - filterTabsProgress) * filterTabsView.getMeasuredHeight();
+                dialogsHintCell.setTranslationY(value - tabsYOffset);
+            } else {
+                dialogsHintCell.setTranslationY(value);
+            }
         }
         if (animatedStatusView != null) {
             animatedStatusView.translateY2((int) value);

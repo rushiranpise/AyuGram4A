@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.preferences.components.InfoSettingsCell;
+import com.exteragram.messenger.preferences.components.HeaderSettingsCell;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -190,7 +190,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 4:
-                    view = new InfoSettingsCell(mContext);
+                    view = new HeaderSettingsCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 5:
@@ -204,7 +204,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 case 8:
                     view = new TextInfoPrivacyCell(mContext);
                     break;
-                // case 9: Appearance > AvatarCornersCell
+                // case 9: Appearance > AvatarCornersPreviewCell
                 // case 10: Chats > StickerShapeCell
                 // case 11: Chats > StickerSizeCell
                 // case 12: Appearance > FabShapeCell
@@ -212,10 +212,10 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                     view = new SlideChooseView(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
-                // case 14: General > ActionBarSetupCell
-                // case 15: Chats > DoubleTapCell
+                // case 14: General > ActionBarSetupCell, Appearance > FoldersPreviewCell
+                // case 15: Chats > DoubleTapCell, Appearance > SolarIconsPreviewCell
                 // case 16: Chats > SetReactionCell
-                // case 17: General > CameraTypeSelector
+                // case 17: General > CameraTypeSelector, Appearance > ChatListPreviewCell
                 case 18:
                     view = new TextCheckCell2(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
