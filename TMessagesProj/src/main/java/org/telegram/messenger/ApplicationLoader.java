@@ -136,7 +136,7 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return new File("/data/data/com.radolyn.ayugram/files");
+        return new File("/data/data/" + getApplicationId() + "/files");
     }
 
     public static String getAccountPath(int accountId) {

@@ -11857,40 +11857,12 @@ public class MessagesStorage extends BaseController {
         }
     }
 
-    public void saveThHistory(long uid, long mid, long date, String message) {
-        try {
-            String query = String.format(Locale.US,
-                    "insert into telegraher_message_history values(%d,%d,%d,'%s');"
-                    , mid
-                    , uid
-                    , date
-                    , android.util.Base64.encodeToString(message.getBytes(), Base64.DEFAULT)
-            );
-            database.executeFast(query).stepThis().dispose();
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-    }
-
     public void wipeThHistory() {
         try {
             database.executeFast("delete from telegraher_message_history;").stepThis().dispose();
         } catch (Exception e) {
             FileLog.e(e);
         }
-    }
-
-    public Map<Long, String> loadThHistory(long uid, long mid) {
-        Map<Long, String> map = new LinkedHashMap<>();
-        try {
-            SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "select mid,uid,date,message from telegraher_message_history where uid=%d and mid=%d order by date desc;", uid, mid));
-            while (cursor.next()) {
-                map.put(cursor.longValue(2), cursor.stringValue(3));
-            }
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        return map;
     }
 
     public void markMessagesContentAsRead(long dialogId, ArrayList<Integer> mids, int date) {

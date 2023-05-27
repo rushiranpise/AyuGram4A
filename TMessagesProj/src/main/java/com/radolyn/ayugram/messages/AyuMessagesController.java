@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class AyuMessagesController {
-    private static final File attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), "Saved Attachments");
+    public static final String attachmentsSubfolder = "Saved Attachments";
+    private static final File attachmentsPath = new File(ApplicationLoader.getFilesDirFixed().getPath(), attachmentsSubfolder);
     private static AyuMessagesController instance;
     private final AyuDatabase database;
 
@@ -67,13 +68,25 @@ public class AyuMessagesController {
             }
 
             if (success) {
-                revision.path = dest.getAbsolutePath();
-                revision.isDocument = isDocument;
+                attachPathFile = new File(dest.getAbsolutePath());
             }
         }
 
+        var attachPath = attachPathFile.getAbsolutePath();
+
+        revision.path = attachPath;
+        revision.isDocument = isDocument;
+
+        var dao = database.editedMessageDao();
+
         var dialogId = MessageObject.getDialogId(oldMessage);
         var messageId = newMessage.id;
+
+        if (!sameMedia && dao.isFirstRevisionWithChangedMedia(userId, dialogId, messageId)) {
+            // update previous revisions to reflect media change
+            // like, there's no previous file, so replace it with new...
+            dao.updateAttachmentForRevisionsBeforeDate(userId, dialogId, messageId, attachPath, currentTime);
+        }
 
         revision.userId = userId;
         revision.dialogId = dialogId;
@@ -81,9 +94,8 @@ public class AyuMessagesController {
         revision.text = oldMessage.message;
         revision.date = currentTime;
 
-        database.editedMessageDao().insert(revision);
+        dao.insert(revision);
     }
-
 
     public List<EditedMessage> getRevisions(long userId, long dialogId, int msgId) {
         return database.editedMessageDao().getAllRevisions(userId, dialogId, msgId);

@@ -33,7 +33,7 @@ public class AyuMessageCell extends ChatMessageCell {
         super.onLayout(changed, left, top, right, bottom);
 
         // dirty hack to load our image instead of default one
-        if (!loadedAttachment) {
+        if (!loadedAttachment && getMessageObject().useCustomPhoto) {
             getPhotoImage().setImage(getMessageObject().messageOwner.attachPath, null, locationLoadingThumb, null, 0);
         }
     }

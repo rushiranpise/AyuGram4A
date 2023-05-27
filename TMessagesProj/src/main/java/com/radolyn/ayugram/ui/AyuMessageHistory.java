@@ -14,6 +14,7 @@ import com.radolyn.ayugram.messages.AyuMessagesController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -35,10 +36,10 @@ import java.util.List;
 
 public class AyuMessageHistory extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
     private final List<EditedMessage> messages;
+    private final int rowCount;
     private RecyclerListView listView;
     private AyuMessageHistory.ListAdapter adapter;
     private LinearLayoutManager layoutManager;
-    private final int rowCount;
 
     public AyuMessageHistory(long userId, MessageObject messageObject) {
         var messagesController = AyuMessagesController.getInstance();
@@ -91,7 +92,7 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
         });
         listView.setVerticalScrollBarEnabled(true);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        listView.setAdapter(adapter = new AyuMessageHistory.ListAdapter(context, this));
+        listView.setAdapter(adapter = new AyuMessageHistory.ListAdapter(context));
 
         return fragmentView;
     }
@@ -154,11 +155,9 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
 
         private final Context context;
-        private final AyuMessageHistory fragment;
 
-        public ListAdapter(Context context, AyuMessageHistory fragment) {
+        public ListAdapter(Context context) {
             this.context = context;
-            this.fragment = fragment;
         }
 
         @Override
@@ -195,32 +194,34 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
                 msg.date = (int) editedMessage.date;
                 msg.dialog_id = -1;
                 msg.flags = 259;
-                msg.id = 2;
+                msg.id = Utilities.random.nextInt();
                 msg.out = false;
                 msg.peer_id = new TLRPC.TL_peerUser();
                 msg.peer_id.user_id = 1;
 
-                msg.attachPath = editedMessage.path;
+                if (editedMessage.path != null) {
+                    msg.attachPath = editedMessage.path;
 
-                msg.media = new TLRPC.TL_messageMediaPhoto();
-                msg.media.flags |= 3;
-                msg.media.photo = new TLRPC.TL_photo();
-                msg.media.photo.file_reference = new byte[0];
-                msg.media.photo.has_stickers = false;
-                msg.media.photo.id = 1;
-                msg.media.photo.access_hash = 0;
-                msg.media.photo.date = (int) editedMessage.date;
-                TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
-                photoSize.size = 0;
-                photoSize.w = 500;
-                photoSize.h = 302;
-                photoSize.type = "s";
-                photoSize.location = new TLRPC.TL_fileLocationUnavailable();
-                msg.media.photo.sizes.add(photoSize);
-                msg.attachPath = editedMessage.path;
+                    msg.media = new TLRPC.TL_messageMediaPhoto();
+                    msg.media.flags |= 3;
+                    msg.media.photo = new TLRPC.TL_photo();
+                    msg.media.photo.file_reference = new byte[0];
+                    msg.media.photo.has_stickers = false;
+                    msg.media.photo.id = Utilities.random.nextInt();
+                    msg.media.photo.access_hash = 0;
+                    msg.media.photo.date = (int) editedMessage.date;
+                    TLRPC.TL_photoSize photoSize = new TLRPC.TL_photoSize();
+                    photoSize.size = 0;
+                    photoSize.w = 500;
+                    photoSize.h = 302;
+                    photoSize.type = "s";
+                    photoSize.location = new TLRPC.TL_fileLocationUnavailable();
+                    msg.media.photo.sizes.add(photoSize);
+                    msg.attachPath = editedMessage.path;
+                }
 
                 var messageObject = new MessageObject(getCurrentAccount(), msg, true, false);
-                messageObject.useCustomPhoto = true;
+                messageObject.useCustomPhoto = editedMessage.path != null;
 
                 ayuMessageDetailCell.setMessageObject(messageObject, null, false, false);
                 ayuMessageDetailCell.setId(position);
