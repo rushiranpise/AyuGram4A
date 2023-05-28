@@ -37,6 +37,9 @@ public class AyuMessagesController {
             if (attachmentsPath.exists()) {
                 attachmentsPath.delete();
             }
+        }
+
+        if (!attachmentsPath.exists()) {
             attachmentsPath.mkdirs();
             try {
                 new File(attachmentsPath, ".nomedia").createNewFile();
