@@ -1384,16 +1384,7 @@ public class PushListenerController {
 
         @Override
         public boolean hasServices() {
-            if (hasServices == null) {
-                try {
-                    int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(ApplicationLoader.applicationContext);
-                    hasServices = resultCode == ConnectionResult.SUCCESS;
-                } catch (Exception e) {
-                    FileLog.e(e);
-                    hasServices = false;
-                }
-            }
-            return hasServices;
+            return false;
         }
     }
 }
