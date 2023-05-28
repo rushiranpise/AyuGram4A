@@ -6,7 +6,6 @@ import android.content.Context;
 import com.radolyn.ayugram.database.entities.EditedMessage;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -34,16 +33,25 @@ public class AyuMessageCell extends ChatMessageCell {
         locationLoadingThumb = new ClipRoundedDrawable(svgThumb);
 
         setOnClickListener(v -> {
-            if (editedMessage.text != null && !editedMessage.text.equals("")) {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("ayuMessageHistory", editedMessage.text);
-                clipboard.setPrimaryClip(clip);
-                BulletinFactory.of(fragment).createSimpleBulletin(R.drawable.msg_info, LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
+            // copy only if no media
+            if (editedMessage.path == null && editedMessage.text != null && !editedMessage.text.equals("")) {
+                AndroidUtilities.addToClipboard(editedMessage.text);
+                BulletinFactory.of(fragment).createCopyBulletin(LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
             }
 
+            // ..open media otherwise
             if (editedMessage.path != null) {
                 AndroidUtilities.openForView(getMessageObject(), activity, null);
             }
+        });
+
+        setOnLongClickListener(v -> {
+            if (editedMessage.text != null && !editedMessage.text.equals("")) {
+                AndroidUtilities.addToClipboard(editedMessage.text);
+                BulletinFactory.of(fragment).createCopyBulletin(LocaleController.getString("MessageCopied", R.string.MessageCopied)).show();
+            }
+
+            return true;
         });
     }
 
