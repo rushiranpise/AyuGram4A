@@ -24,10 +24,7 @@ Follow our [Telegram channel](https://t.me/ayugram1338).
 
 ## Why there's no `X` feature from Telegraher?
 
-Reason is still the same:
-[read here](https://github.com/AyuGram/windows-patches/tree/main#why-patches-why-not-the-full-source-code).
-
-Also, there's no AyuGram's settings. All features enabled by default except ghost mode.
+Because I'm too lazy, and some Telegraher's features are useless for the most of people.
 
 ## How to contribute
 
@@ -37,7 +34,7 @@ Work on any feature you want.
 
 ## How to build
 
-1. Clone source code using `git clone https://github.com/AyuGram/AyuGram4A/`
+1. Clone source code using `git clone https://github.com/AyuGram/AyuGram4A.git`
 2. Open the project in Android Studio. It should be opened, **not imported**
 3. You are ready to compile `AyuGram`
 
@@ -49,7 +46,12 @@ Work on any feature you want.
 
 ## AyuGram Localization
 
-Since AyuGram is based on **exteraGram**, join their project
+[![Crowdin](https://badges.crowdin.net/ayugram/localized.svg)](https://crowdin.com/project/ayugram)
+[![Crowdin](https://badges.crowdin.net/exteralocales/localized.svg)](https://crowdin.com/project/exteralocales)
+
+We have our own [Crowdin](https://crowdin.com/project/ayugram).
+
+But since AyuGram is based on **exteraGram**, also join their project
 at [Crowdin](https://crowdin.com/project/exteralocales)!
 
 ## Credits
@@ -58,3 +60,4 @@ at [Crowdin](https://crowdin.com/project/exteralocales)!
 - [Telegraher](https://github.com/nikitasius/Telegraher)
 - [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)
 - [Nagram](https://github.com/NextAlone/Nagram)
+- [Telegram FOSS](https://github.com/Telegram-FOSS-Team/Telegram-FOSS)
