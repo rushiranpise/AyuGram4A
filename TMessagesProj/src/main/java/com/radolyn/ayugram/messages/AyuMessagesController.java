@@ -97,6 +97,8 @@ public class AyuMessagesController {
 
             if (success) {
                 attachPathFile = new File(dest.getAbsolutePath());
+            } else {
+                attachPathFile = new File("/");
             }
         }
 
