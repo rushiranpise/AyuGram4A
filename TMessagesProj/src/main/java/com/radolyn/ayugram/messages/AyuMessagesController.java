@@ -64,6 +64,10 @@ public class AyuMessagesController {
         return database.editedMessageDao().hasAnyRevisions(userId, dialogId, msgId);
     }
 
+    public boolean hasAnyRevisionsByGroupId(long userId, long dialogId, long groupId) {
+        return database.editedMessageDao().hasAnyRevisionsByGroupId(userId, dialogId, groupId);
+    }
+
     public void onMessageEdited(TLRPC.Message oldMessage, TLRPC.Message newMessage, long userId, int accountId, int currentTime) {
         if (!ExteraConfig.keepMessagesHistory) {
             return;
@@ -111,6 +115,7 @@ public class AyuMessagesController {
 
         var dialogId = MessageObject.getDialogId(oldMessage);
         var messageId = newMessage.id;
+        var groupId = newMessage.grouped_id;
 
         if (!sameMedia && revision.path != null && dao.isFirstRevisionWithChangedMedia(userId, dialogId, messageId)) {
             // update previous revisions to reflect media change
@@ -121,6 +126,7 @@ public class AyuMessagesController {
         revision.userId = userId;
         revision.dialogId = dialogId;
         revision.messageId = messageId;
+        revision.groupId = groupId;
         revision.text = oldMessage.message;
         revision.date = currentTime;
 
@@ -129,5 +135,9 @@ public class AyuMessagesController {
 
     public List<EditedMessage> getRevisions(long userId, long dialogId, int msgId) {
         return database.editedMessageDao().getAllRevisions(userId, dialogId, msgId);
+    }
+
+    public List<EditedMessage> getRevisionsByGroupId(long userId, long dialogId, long groupId) {
+        return database.editedMessageDao().getAllRevisionsByGroupId(userId, dialogId, groupId);
     }
 }

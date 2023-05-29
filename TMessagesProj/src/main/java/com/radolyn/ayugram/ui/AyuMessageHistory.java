@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.util.Log;
 import com.radolyn.ayugram.database.entities.EditedMessage;
 import com.radolyn.ayugram.messages.AyuMessagesController;
 
@@ -43,7 +44,15 @@ public class AyuMessageHistory extends BaseFragment implements NotificationCente
 
     public AyuMessageHistory(long userId, MessageObject messageObject) {
         var messagesController = AyuMessagesController.getInstance();
-        messages = messagesController.getRevisions(userId, messageObject.messageOwner.dialog_id, messageObject.messageOwner.id);
+        if (messagesController.hasAnyRevisionsByGroupId(userId, messageObject.messageOwner.dialog_id, messageObject.messageOwner.grouped_id)) {
+            messages = messagesController.getRevisionsByGroupId(userId, messageObject.messageOwner.dialog_id, messageObject.messageOwner.grouped_id);
+        } else if (messagesController.hasAnyRevisions(userId, messageObject.messageOwner.dialog_id, messageObject.messageOwner.id)) {
+            messages = messagesController.getRevisions(userId, messageObject.messageOwner.dialog_id, messageObject.messageOwner.id);
+        } else {
+            messages = new ArrayList<>();
+            Log.e("AyuGram", "bruh momentum");
+        }
+
         rowCount = messages.size();
     }
 

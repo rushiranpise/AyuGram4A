@@ -8,6 +8,7 @@ public class EditedMessage {
     public long userId;
     public long dialogId;
     public long messageId;
+    public Long groupId;
 
     @ColumnInfo(name = "text")
     public String text;

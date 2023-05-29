@@ -24039,7 +24039,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     && ((message.messageOwner.flags & TLRPC.MESSAGE_FLAG_EDITED) != 0 || message.isEditing())
                     && message.messageOwner.from_id != null
                     && message.messageOwner.from_id.user_id != getAccountInstance().getUserConfig().getClientUserId()
-                    && AyuMessagesController.getInstance().hasAnyRevisions(getAccountInstance().getUserConfig().getClientUserId(), dialog_id, message.messageOwner.id)) {
+                    && (AyuMessagesController.getInstance().hasAnyRevisions(getAccountInstance().getUserConfig().getClientUserId(), dialog_id, message.messageOwner.id)
+                    || AyuMessagesController.getInstance().hasAnyRevisionsByGroupId(getAccountInstance().getUserConfig().getClientUserId(), dialog_id, message.messageOwner.grouped_id)
+            )
+            ) {
                 items.add(LocaleController.getString("EditsHistoryMenuText", R.string.EditsHistoryMenuText));
                 options.add(420_001);
                 icons.add(R.drawable.msg_log);

@@ -14,6 +14,9 @@ public interface EditedMessageDao {
     @Query("SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId ORDER BY date")
     List<EditedMessage> getAllRevisions(long userId, long dialogId, long messageId);
 
+    @Query("SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND groupId = :groupId ORDER BY date")
+    List<EditedMessage> getAllRevisionsByGroupId(long userId, long dialogId, long groupId);
+
     @Query("UPDATE editedmessage SET path = :newPath WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId AND date < :beforeDate")
     void updateAttachmentForRevisionsBeforeDate(long userId, long dialogId, long messageId, String newPath, long beforeDate);
 
@@ -22,6 +25,9 @@ public interface EditedMessageDao {
 
     @Query("SELECT EXISTS(SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId)")
     boolean hasAnyRevisions(long userId, long dialogId, long messageId);
+
+    @Query("SELECT EXISTS(SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND groupId = :groupId)")
+    boolean hasAnyRevisionsByGroupId(long userId, long dialogId, long groupId);
 
     @Query("SELECT * FROM editedmessage WHERE userId = :userId AND dialogId = :dialogId AND messageId = :messageId AND date = :date")
     EditedMessage getRevision(long userId, long dialogId, long messageId, long date);
