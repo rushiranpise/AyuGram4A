@@ -4929,11 +4929,11 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
                     }
                 });
-            } else {
-                AndroidUtilities.runOnUIThread(() -> {
-                    checkChannelError(error.text, chatId);
-                    loadingFullChats.remove(chatId);
-                });
+            // } else {
+            //     AndroidUtilities.runOnUIThread(() -> {
+            //         checkChannelError(error.text, chatId);
+            //         loadingFullChats.remove(chatId);
+            //     });
             }
         });
         if (classGuid != 0) {
@@ -17337,15 +17337,15 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public static String getRestrictionReason(ArrayList<TLRPC.TL_restrictionReason> reasons) {
-        if (reasons.isEmpty() || true) {
-            return null;
-        }
-        for (int a = 0, N = reasons.size(); a < N; a++) {
-            TLRPC.TL_restrictionReason reason = reasons.get(a);
-            if ("all".equals(reason.platform) || !BuildVars.isBetaApp() && "android".equals(reason.platform)) {
-                return reason.text;
-            }
-        }
+        // if (reasons.isEmpty() || true) {
+        //     return null;
+        // }
+        // for (int a = 0, N = reasons.size(); a < N; a++) {
+        //     TLRPC.TL_restrictionReason reason = reasons.get(a);
+        //     if ("all".equals(reason.platform) || !BuildVars.isBetaApp() && "android".equals(reason.platform)) {
+        //         return reason.text;
+        //     }
+        // }
         return null;
     }
 
