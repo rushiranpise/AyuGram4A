@@ -3,7 +3,7 @@ name: Build release APK
 on:
   workflow_dispatch:
   push:
-    branches: [ "rewrite" ]
+    branches: [ "test" ]
 
 jobs:
   build:
